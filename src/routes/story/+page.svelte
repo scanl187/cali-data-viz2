@@ -4,6 +4,8 @@
   import Seasons from '$lib/Seasons.svelte';
   import SeasonsOld from '$lib/SeasonsOld.svelte';
   import CountyHeatmap from '$lib/CountyHeatmap.svelte';
+  import HexbinMap from '$lib/HexbinMap.svelte';
+
 
 
 
@@ -127,7 +129,7 @@
       <!-- IF PROGRESS LESS THAN 50 THAN 1 VISUALIZATION -->
       {#if progress <0.242}
         <div class="viz-1">
-          <!-- DISPLAY SELECTED VISUALIZATION -->
+          <!-- DISPLAY S  ELECTED VISUALIZATION -->
           {#if activeSection === "ENVIRONMENTAL"}
           <p>Insert Environmental Visualization</p>
           {:else if activeSection === "GEOGRAPHICAL"}
@@ -148,7 +150,11 @@
           {#if activeSection === "ENVIRONMENTAL"}
           <p>Insert Environmental Visualization #1</p>
           {:else if activeSection === "GEOGRAPHICAL"}
-          <p>Insert Geographical Visualization #1</p>
+          <HexbinMap
+  csvPath="/fire_points.csv"
+  geojsonPath="/california-counties.geojson"
+  {progress}
+/>
           {:else if activeSection === "SEASONAL"}
           <Seasons csvPath="/fire_climate_data.csv" currentProgress={progress} />
 
@@ -175,7 +181,7 @@
           />
 
           {:else if activeSection === "SEASONAL"}
-          <SeasonsOld csvPath="/fire_climate_data.csv" />
+          <SeasonsOld csvPath="/fire_climate_data.csv" currentProgress={progress} />
           {/if}
 
           <!-- PROGRESS TRACKING -->
