@@ -8,6 +8,7 @@
   import FireDurationAndPrecip from "$lib/FireDurationAndPrecip.svelte";
 
   let progress: number = $state(0);
+  
 
   // ACTIVE SECTION STATE
   let activeSection: string = $state("GEOGRAPHICAL");
@@ -127,7 +128,7 @@
     <!-- VISUALIZATIONS -->
     <div class="visualizations">
       <!-- IF PROGRESS LESS THAN 50 THAN 1 VISUALIZATION -->
-      {#if progress < 50}
+      {#if progress <0.5}
         <div class="viz-1">
           <!-- DISPLAY SELECTED VISUALIZATION -->
           {#if activeSection === "ENVIRONMENTAL"}
@@ -145,7 +146,7 @@
       {/if}
 
       <!-- IF PROGRESS GREATER THAN 50 THAN 2 VISUALIZATION -->
-      {#if progress > 50}
+      {#if progress > 0.4}
         <div class="viz-2">
           <!-- DISPLAY SELECTED VISUALIZATION -->
           {#if activeSection === "ENVIRONMENTAL"}
@@ -154,11 +155,15 @@
           {:else if activeSection === "GEOGRAPHICAL"}
           <p>Insert Geographical Visualization #1</p>
           {:else if activeSection === "SEASONAL"}
-          <Seasons csvPath="/fire_climate_data.csv" />
+          <Seasons csvPath="/fire_climate_data.csv" currentProgress={progress} />
+
           {/if}
 
           <!-- PROGRESS TRACKING -->
           <p>{progress}</p>
+          
+
+
         </div>
 
         <div class="viz-2">
@@ -288,28 +293,31 @@
     color: #5c3b2e;
   }
 
-  /* VISUALIZATION WRAPPER FOR LAYOUT */
   .visualizations {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50vh;
-    padding: 10px 0;
-    background-color: #f4f0ed;
-    gap: 10px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* aligns children to the right */
+  padding: 10px 2rem;
+  background-color: #f4f0ed;
+  gap: 20px;
+}
 
-  /* BOX STYLES FOR INDIVIDUAL VISUALIZATIONS */
-  .viz-1,
-  .viz-2 {
-    width: 100%;
-    height: 100%;
-    padding: 1rem;
-    background-color: #ebe5df;
-    border: 1px solid #d4c2b1;
-    border-radius: 8px;
-    color: #3e2c28;
-  }
+
+
+
+.viz-1,
+.viz-2 {
+  width: 85%; /* or use px like 700px if you prefer */
+  max-width: 1100px;
+  background-color: #ebe5df;
+  border: 1px solid #d4c2b1;
+  border-radius: 8px;
+  color: #3e2c28;
+  padding: 1rem;
+  margin-right: 0;  /* ensure no auto margin pushes it */
+  align-self: flex-end; /* double confirm alignment */
+}
+
 
   /* TEAM MEMBERS CONTAINER */
   .team-members {
