@@ -18,7 +18,7 @@
   
     let svg, g, x, y, color;
     const margin = { top: 60, right: 150, bottom: 60, left: 80 };
-    const width = 1200, height = 600;
+    const width = 800, height = 400;
     let innerWidth = width - margin.left - margin.right;
     let innerHeight = height - margin.top - margin.bottom;
   
