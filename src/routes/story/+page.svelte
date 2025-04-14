@@ -4,8 +4,8 @@
   import Seasons from '$lib/Seasons.svelte';
   import SeasonsOld from '$lib/SeasonsOld.svelte';
   import CountyHeatmap from '$lib/CountyHeatmap.svelte';
-
-
+  import ParallelCoordsWithDualCharts from "$lib/ParallelCoordsWithDualCharts.svelte";
+  import FireDurationAndPrecip from "$lib/FireDurationAndPrecip.svelte";
 
   let progress: number = $state(0);
 
@@ -25,6 +25,7 @@
     <div class="menu-bar">
       <!-- TITLE -->
       <h1>GOLDEN STATE OF FIRE</h1>
+      <p>{progress}</p>
 
       <!-- TEAM ICON -->
       <div class="team-icon" onclick={() => showTeam = !showTeam}>
@@ -120,6 +121,8 @@
       {/if}
     </div>
 
+    <!-- <div style="height: 500px;"></div> -->
+
 
     <!-- VISUALIZATIONS -->
     <div class="visualizations">
@@ -128,7 +131,8 @@
         <div class="viz-1">
           <!-- DISPLAY SELECTED VISUALIZATION -->
           {#if activeSection === "ENVIRONMENTAL"}
-          <p>Insert Environmental Visualization</p>
+          <!-- <p>Insert Environmental Visualization</p> -->
+           <ParallelCoordsWithDualCharts />
           {:else if activeSection === "GEOGRAPHICAL"}
           <p>Insert Geographical Visualization</p>
           {:else if activeSection === "SEASONAL"}
@@ -136,7 +140,7 @@
           {/if}
 
           <!-- PROGRESS TRACKING -->
-          <p>{progress}</p>
+          
         </div>
       {/if}
 
@@ -145,7 +149,8 @@
         <div class="viz-2">
           <!-- DISPLAY SELECTED VISUALIZATION -->
           {#if activeSection === "ENVIRONMENTAL"}
-          <p>Insert Environmental Visualization #1</p>
+          <!-- <p>Insert Environmental Visualization #1</p> -->
+          <FireDurationAndPrecip />
           {:else if activeSection === "GEOGRAPHICAL"}
           <p>Insert Geographical Visualization #1</p>
           {:else if activeSection === "SEASONAL"}
