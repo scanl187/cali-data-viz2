@@ -21,6 +21,10 @@
       { value: "temp", label: "Temperature vs Fire Count" },
       { value: "wind", label: "Wind Speed vs Fire Count" }
     ];
+
+    // Define a narrower width for all charts
+    const chartMaxWidth = 600; // Reduced from 800px
+    const chartHeight = 300;
   
     onMount(async () => {
       if (!Plotly) Plotly = (await import("plotly.js-dist"))?.default;
@@ -88,7 +92,8 @@
         {
           margin: { t: 50, r: 50, l: 50, b: 30 },
           title: "California Wildfires - Parallel Coordinates",
-          displaylogo: false
+          displaylogo: false,
+          width: chartMaxWidth
         }
       );
   
@@ -185,8 +190,11 @@
       }
   
       const margin = { top: 30, right: 60, bottom: 50, left: 60 };
-      const width = 800 - margin.left - margin.right;
-      const height = 300 - margin.top - margin.bottom;
+      // Adjusted width calculation based on chartMaxWidth
+      const width = chartMaxWidth - margin.left - margin.right;
+      const height = chartHeight - margin.top - margin.bottom;
+      
+      // Create SVG with adjusted dimensions
       const svg = d3.select(container).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -206,7 +214,7 @@
         .attr("x", -height / 2)
         .attr("y", -40)
         .attr("text-anchor", "middle")
-        .style("font-size", "13px")
+        .style("font-size", "12px") // Slightly reduced text size
         .text(label);
   
       svg.append("text")
@@ -214,36 +222,62 @@
         .attr("x", -height / 2)
         .attr("y", width + 45)
         .attr("text-anchor", "middle")
-        .style("font-size", "13px")
+        .style("font-size", "12px") // Slightly reduced text size
         .text("Fire Count");
   
       svg.append("path")
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", "steelblue")
-        .attr("stroke-width", 2.5)
+        .attr("stroke-width", 2)
         .attr("d", d3.line().x(d => x(d.YEAR)).y(d => yLeft(d[yMetric])));
   
       svg.append("path")
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", "crimson")
-        .attr("stroke-width", 2.5)
+        .attr("stroke-width", 2)
         .attr("d", d3.line().x(d => x(d.YEAR)).y(d => yRight(d.FireCount)));
     }
   </script>
   
-  <div bind:this={chartDiv} style="width: 100%; height: 600px; max-width: 1000px;"></div>
-  
-  <div style="margin: 20px 0;">
-    <label for="chart-select">Select Chart: </label>
-    <select id="chart-select" bind:value={selectedChart} on:change={handleChartSelection}>
-      {#each chartOptions as option}
-        <option value={option.value}>{option.label}</option>
-      {/each}
-    </select>
+  <div class="chart-container">
+    <div bind:this={chartDiv} class="chart-div"></div>
+    
+    <div class="chart-selector">
+      <label for="chart-select">Select Chart: </label>
+      <select id="chart-select" bind:value={selectedChart} on:change={handleChartSelection}>
+        {#each chartOptions as option}
+          <option value={option.value}>{option.label}</option>
+        {/each}
+      </select>
+    </div>
+    
+    <div bind:this={precipChartDiv} class="dual-chart"></div>
+    <div bind:this={tempChartDiv} class="dual-chart"></div>
+    <div bind:this={windChartDiv} class="dual-chart"></div>
   </div>
+
+<style>
+  .chart-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   
-  <div bind:this={precipChartDiv}></div>
-  <div bind:this={tempChartDiv}></div>
-  <div bind:this={windChartDiv}></div>
+  .chart-div, .dual-chart {
+    width: 100%;
+    max-width: 600px; /* Reduced from 800px */
+  }
+  
+  .chart-selector {
+    margin: 20px 0;
+  }
+  
+  /* Ensure charts fit in container */
+  :global(.js-plotly-plot) {
+    max-width: 100%;
+    overflow: hidden;
+  }
+</style>

@@ -7,6 +7,10 @@
     let data = [];
     let yearRange = { min: 2013, max: 2020 };
     
+    // Set a narrower width to match the other charts
+    const chartMaxWidth = 600; // Reduced from 800px
+    const chartHeight = 400; // Slightly reduced from 500px
+    
     onMount(async () => {
       try {
         const response = await fetch('./California_Fire_Incidents_with_precip_2013-2020.csv');
@@ -42,8 +46,8 @@
     
     function drawScatterPlot() {
       const margin = { top: 50, right: 40, bottom: 60, left: 70 };
-      const width = 800 - margin.left - margin.right;
-      const height = 500 - margin.top - margin.bottom;
+      const width = chartMaxWidth - margin.left - margin.right;
+      const height = chartHeight - margin.top - margin.bottom;
       
       d3.select(container).selectAll("svg").remove(); // Clear old svg
       d3.select(container).selectAll(".tooltip").remove(); // Also clear old tooltips
@@ -95,7 +99,7 @@
         .attr("y", height + margin.bottom - 15)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
-        .style("font-size", "14px")
+        .style("font-size", "13px") // Reduced font size slightly
         .text("Normalized Precipitation (0-100)");
       
       // Find max duration for Y scale with some padding
@@ -118,7 +122,7 @@
         .attr("y", -margin.left + 20)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
-        .style("font-size", "14px")
+        .style("font-size", "13px") // Reduced font size slightly
         .text("Fire Duration (days)");
       
       // Add title
@@ -127,7 +131,7 @@
         .attr("y", -margin.top / 2)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
-        .style("font-size", "18px")
+        .style("font-size", "16px") // Reduced from 18px
         .style("font-weight", "bold")
         .text(`Fire Duration vs. Precipitation (2013-2020)`);
       
@@ -156,14 +160,14 @@
         .append("circle")
         .attr("cx", d => x(d.average_precip_norm))
         .attr("cy", d => y(d.duration))
-        .attr("r", 5)
+        .attr("r", 4) // Reduced from 5
         .attr("fill", d => colorScale(d.precip_bucket_qcut))
         .attr("stroke", "black")
         .attr("stroke-width", 1)
         .attr("opacity", 0.7)
         .on("mouseover", function(event, d) {
           d3.select(this)
-            .attr("r", 8)
+            .attr("r", 7) // Reduced from 8
             .attr("opacity", 1);
           
           tooltip.style("opacity", 0.9);
@@ -184,7 +188,7 @@
         })
         .on("mouseout", function() {
           d3.select(this)
-            .attr("r", 5)
+            .attr("r", 4) // Reduced from 5
             .attr("opacity", 0.7);
           
           tooltip.style("opacity", 0);
@@ -192,7 +196,7 @@
       
       // Add legend for precipitation buckets
       const legend = svg.append("g")
-        .attr("transform", `translate(${width - 120}, 0)`);
+        .attr("transform", `translate(${width - 100}, 0)`); // Moved slightly to fit in narrower chart
       
       const buckets = ["LOW", "MEDIUM", "HIGH"];
       
@@ -203,16 +207,16 @@
         legendRow.append("circle")
           .attr("cx", 0)
           .attr("cy", 0)
-          .attr("r", 5)
+          .attr("r", 4) // Reduced from 5
           .attr("fill", colorScale(bucket))
           .attr("stroke", "black")
           .attr("stroke-width", 1);
         
         legendRow.append("text")
           .attr("x", 10)
-          .attr("y", 5)
+          .attr("y", 4) // Adjusted
           .style("font-family", "sans-serif")
-          .style("font-size", "12px")
+          .style("font-size", "11px") // Reduced from 12px
           .text(`${bucket} Precip`);
       });
       
@@ -222,13 +226,20 @@
         .attr("y", height + 40)
         .attr("text-anchor", "end")
         .style("font-family", "sans-serif")
-        .style("font-size", "12px")
+        .style("font-size", "11px") // Reduced from 12px
         .style("font-style", "italic")
         .text(`Total fires: ${cleanData.length}`);
     }
   </script>
   
   <style>
+    .chart-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
     .tooltip {
       font-family: sans-serif;
       font-size: 12px;
@@ -237,6 +248,6 @@
     }
   </style>
   
-  <div style="font-family: sans-serif; max-width: 800px;">
-    <div bind:this={container}></div>
+  <div class="chart-container">
+    <div bind:this={container} style="width: 100%; max-width: 600px;"></div>
   </div>
