@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { Scroll } from "$lib";
+  import Scroll from "$lib/Scroll.svelte";
   import { slide, fly } from "svelte/transition";
+  import Seasons from '$lib/Seasons.svelte';
+  import SeasonsOld from '$lib/SeasonsOld.svelte';
+  import CountyHeatmap from '$lib/CountyHeatmap.svelte';
+
+
 
   let progress: number = $state(0);
 
@@ -51,7 +56,8 @@
         SEASONAL
       </button>
     </div>
-
+    
+  
     <!-- TEAM MEMBERS -->
     {#if showTeam}
     <div class="team-members">
@@ -143,7 +149,7 @@
           {:else if activeSection === "GEOGRAPHICAL"}
           <p>Insert Geographical Visualization #1</p>
           {:else if activeSection === "SEASONAL"}
-          <p>Insert Seasonal Visualization #1</p>
+          <Seasons csvPath="/fire_climate_data.csv" />
           {/if}
 
           <!-- PROGRESS TRACKING -->
@@ -155,9 +161,14 @@
           {#if activeSection === "ENVIRONMENTAL"}
           <p>Insert Environmental Visualization #2</p>
           {:else if activeSection === "GEOGRAPHICAL"}
-          <p>Insert Geographical Visualization #2</p>
+          <CountyHeatmap
+          csvPath="/corr_heatmap_county.csv"
+          initialStartYear={1992}
+          initialEndYear={2000}
+          initialTopN={5}
+           />
           {:else if activeSection === "SEASONAL"}
-          <p>Insert Seasonal Visualization #2</p>
+          <SeasonsOld csvPath="/fire_climate_data.csv" />
           {/if}
 
           <!-- PROGRESS TRACKING -->
