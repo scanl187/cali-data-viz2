@@ -125,7 +125,7 @@
     <!-- VISUALIZATIONS -->
     <div class="visualizations">
       <!-- IF PROGRESS LESS THAN 50 THAN 1 VISUALIZATION -->
-      {#if progress <0.5}
+      {#if progress <0.242}
         <div class="viz-1">
           <!-- DISPLAY SELECTED VISUALIZATION -->
           {#if activeSection === "ENVIRONMENTAL"}
@@ -142,7 +142,7 @@
       {/if}
 
       <!-- IF PROGRESS GREATER THAN 50 THAN 2 VISUALIZATION -->
-      {#if progress > 0.4}
+      {#if progress > 0.242}
         <div class="viz-2">
           <!-- DISPLAY SELECTED VISUALIZATION -->
           {#if activeSection === "ENVIRONMENTAL"}
@@ -169,9 +169,11 @@
           <CountyHeatmap
           csvPath="/corr_heatmap_county.csv"
           initialStartYear={1992}
-          initialEndYear={2000}
+          initialEndYear={2020}
           initialTopN={5}
-           />
+          {progress}
+          />
+
           {:else if activeSection === "SEASONAL"}
           <SeasonsOld csvPath="/fire_climate_data.csv" />
           {/if}
