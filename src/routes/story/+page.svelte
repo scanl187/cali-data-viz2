@@ -263,7 +263,6 @@
               {progress}
             />
             
-
               {:else if activeSection === "SEASONAL"}
                 <Seasons
                   csvPath="/fire_climate_data.csv"
