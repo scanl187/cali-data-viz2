@@ -10,28 +10,38 @@
     Color,
     GeoJsonDataSource,
     VerticalOrigin,
-    JulianDate
+    JulianDate,
   } from "cesium";
   import "cesium/Build/Cesium/Widgets/widgets.css";
+  import { goto } from "$app/navigation";
 
   let viewer: Viewer;
   let fireData: any[] = [];
   let selectedYear = 2005;
   let availableYears: number[] = [];
 
+  function goBack() {
+    history.length > 1 ? history.back() : goto("/");
+  }
+
   async function updateFires(year: number) {
     viewer.entities.removeAll();
     fireData
-      .filter(d => d.year === year && typeof d.latitude === 'number' && typeof d.longitude === 'number')
-      .forEach(d => {
+      .filter(
+        (d) =>
+          d.year === year &&
+          typeof d.latitude === "number" &&
+          typeof d.longitude === "number",
+      )
+      .forEach((d) => {
         const entity = viewer.entities.add({
           name: `Fire ${d.fire_name}`,
           position: Cartesian3.fromDegrees(d.longitude, d.latitude),
           billboard: {
-            image: '/open-fire-11190_256.gif',
+            image: "/open-fire-11190_256.gif",
             width: 16,
             height: 16,
-            verticalOrigin: VerticalOrigin.BOTTOM
+            verticalOrigin: VerticalOrigin.BOTTOM,
           },
           description: `
             <b>Name:</b> ${d.fire_name}<br/>
@@ -53,7 +63,7 @@
   function parseCSV(text: string) {
     const [headerLine, ...lines] = text.trim().split("\n");
     const headers = headerLine.split(",");
-    return lines.map(line => {
+    return lines.map((line) => {
       const parts = line.split(",");
       const row: any = {};
       headers.forEach((h, i) => {
@@ -72,9 +82,9 @@
       destination: Cartesian3.fromDegrees(-122.4175, 37.655, 2000),
       orientation: {
         heading: CesiumMath.toRadians(0),
-        pitch: CesiumMath.toRadians(-45)
+        pitch: CesiumMath.toRadians(-45),
       },
-      duration: 5
+      duration: 5,
     });
   }
 
@@ -83,7 +93,7 @@
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YTZlNTY2Zi1mNGY1LTQ2Y2EtYTA1ZS0xZmFhZjYwZGI5NDYiLCJpZCI6Mjk0MDQxLCJpYXQiOjE3NDQ2NTA0MzR9.noUc-GDwJGe5SCmqKtr4P0UnGgnu2f3bx9ww6DolHzY";
 
     viewer = new Viewer("cesiumContainer", {
-      terrain: Terrain.fromWorldTerrain()
+      terrain: Terrain.fromWorldTerrain(),
     });
 
     viewer.camera.setView({
@@ -91,15 +101,17 @@
       orientation: {
         heading: CesiumMath.toRadians(0),
         pitch: CesiumMath.toRadians(-90),
-        roll: 0
-      }
+        roll: 0,
+      },
     });
 
     const tileset = await createOsmBuildingsAsync();
     viewer.scene.primitives.add(tileset);
 
-    const countySource = await GeoJsonDataSource.load('/california-counties.geojson');
-    countySource.entities.values.forEach(entity => {
+    const countySource = await GeoJsonDataSource.load(
+      "/california-counties.geojson",
+    );
+    countySource.entities.values.forEach((entity) => {
       entity.polygon.material = Color.YELLOW.withAlpha(0.1);
       entity.polygon.outline = true;
       entity.polygon.outlineColor = Color.YELLOW;
@@ -121,9 +133,11 @@
 </script>
 
 <div class="top-controls">
+  <button on:click={goBack}>← Back</button>
   <button on:click={flyToCalifornia}>Fly Me to California</button>
   <label>
-    <strong>Year:</strong> {selectedYear}
+    <strong>Year:</strong>
+    {selectedYear}
     <input
       type="range"
       min="2000"
