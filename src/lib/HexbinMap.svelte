@@ -74,7 +74,10 @@
     { name: "Ventura", col: 4, row: 12 },
     { name: "Los Angeles", col: 5, row: 12 },
     { name: "Orange", col: 6, row: 12 },
-    { name: "San Diego", col: 5, row: 13 }
+    { name: "San Diego", col: 5, row: 13 },
+    { name: "Riverside", col: 6, row: 13 }, // Just right of San Diego, below San Bernardino
+    { name: "Imperial",  col: 6, row: 14 } // Just below Riverside
+
   ];
 
   const hexRadius = 25;
