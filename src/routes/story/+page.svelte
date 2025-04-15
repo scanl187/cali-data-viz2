@@ -256,12 +256,14 @@
               {#if activeSection === "ENVIRONMENTAL"}
                 <FireDurationAndPrecip {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
+
               <HexbinMap
               csvPath="/fire_points_updated.csv"
               geojsonPath="/california-counties.geojson"
               {progress}
             />
             
+
               {:else if activeSection === "SEASONAL"}
                 <Seasons
                   csvPath="/fire_climate_data.csv"
