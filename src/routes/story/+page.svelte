@@ -32,6 +32,7 @@
   // Process text into array of characters
   let questionText = $derived(getQuestionText());
   let showQuestion = $derived(progress > 1 && progress < 10);
+  let showFacts = $derived(progress >= 12 && progress <= 100);
   let showVisualizations = $derived(progress >= 10);
   
   // Calculate question container width based on progress
@@ -42,6 +43,53 @@
       return "col-md-6";
     }
   });
+
+  const precipFacts = [
+    { 
+      year: "2013–2018", 
+      text: "2013, 2014, 2015, 2016, 2017 & 2018 were years of low to medium precipitation in California.",
+      startProgress: 15,
+      endProgress: 85
+    },
+    { 
+      year: "2019", 
+      text: "2019 was a year of high precipitation across California.",
+      startProgress: 86,
+      endProgress: 1000
+    },
+    {
+      year: "Precipitation & Wildfires",
+      text: "Lower precipitation years tend to have increased wildfire activity due to drier vegetation.",
+      startProgress: 91,
+      endProgress: 1000
+    },
+    {
+      year: "Climate Patterns",
+      text: "Year-to-year precipitation variation shows California's vulnerability to drought cycles.",
+      startProgress: 91,
+      endProgress: 1000
+    }
+  ];
+
+  // Function to get scale for each fact based on its progress
+  function getFactScale(fact) {
+    if (!fact) return { fontSize: "1rem", opacity: 0 };
+    
+    // Calculate where we are in the fact's display range
+    const range = fact.endProgress - fact.startProgress;
+    const position = progress - fact.startProgress;
+    const ratio = position / range;
+    
+    // Start large, then shrink as we approach endProgress
+    const fontSize = Math.max(36 - (22 * ratio), 14) + "px";
+    const opacity = Math.max(1 - (0.8 * ratio), 0.2);
+    
+    return { fontSize, opacity };
+  }
+
+  let visibleFacts = $derived(precipFacts.filter(f => 
+    progress >= f.startProgress && progress <= f.endProgress
+  ));
   
   // Adjust visualization position based on screen size
   onMount(() => {
@@ -160,7 +208,25 @@
 <main class="pt-5 mt-5">
   <div class="container-fluid">
     <div class="row">
-      <!-- Question section that starts wider and shrinks -->
+      <!-- Left column for facts -->
+      <div class="col-md-6">
+        {#if activeSection=='ENVIRONMENTAL'}
+          <div class="fixed-left-facts mt-custom">
+            {#each visibleFacts as fact (fact.year)}
+              {@const scale = getFactScale(fact)}
+              <div class="fact-box" 
+                  in:fly={{ y: 50, duration: 600 }}
+                  out:fade={{ duration: 300 }}
+                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;">
+                <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
+                <p style="font-size: calc({scale.fontSize} * 0.7);">{fact.text}</p>
+              </div>
+            {/each}
+          </div>
+        {/if}
+      </div>
+      
+      <!-- Right column for question and visualizations -->
       <div class={questionContainerClass} style="transition: all 0.8s ease;">
         <Scroll bind:progress>
           <div id="virtual"></div>
@@ -186,7 +252,7 @@
         {#if showVisualizations}
           <div class="fixed-right-visualizations" 
                in:fly={{ x: 200, duration: 800, delay: 300 }}>
-            <div class="viz-container mb-4 mt-4 mt-4">
+            <div class="viz-container mb-4 mt-4">
               {#if activeSection === "ENVIRONMENTAL"}
                 <FireDurationAndPrecip {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
@@ -217,7 +283,7 @@
                   {progress}
                 />
               {:else if activeSection === "SEASONAL"}
-              <SeasonsOld csvPath="/fire_climate_data.csv" currentProgress={progress} />
+                <SeasonsOld csvPath="/fire_climate_data.csv" currentProgress={progress} />
               {/if}
               <p class="small text-muted">Progress: {progress}</p>
             </div>
@@ -308,6 +374,41 @@
     margin: 0 auto;
   }
 
+  /* Facts styling */
+  .fixed-left-facts {
+    position: fixed;
+    top: 140px; /* Adjust based on header height */
+    left: 20px;
+    width: calc(50% - 30px); /* Half of screen minus some padding */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 100;
+    max-height: calc(100vh - 160px); /* Calculate height to fit screen */
+    overflow-y: auto; /* Allow scrolling if facts are tall */
+  }
+  
+  .fact-box {
+    background-color: rgba(204, 92, 60, 0.1);
+    border-left: 4px solid #cc5c3c;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .fact-box h3 {
+    color: #a9442e;
+    margin-bottom: 10px;
+    transition: all 0.5s ease-in-out;
+  }
+  
+  .fact-box p {
+    color: #3e2c28;
+    margin-bottom: 0;
+    transition: all 0.5s ease-in-out;
+  }
+
   /* Fixed visualizations on the right */
   .fixed-right-visualizations {
     position: fixed;
@@ -324,7 +425,7 @@
 
   /* Handle responsive layout */
   @media (max-width: 768px) {
-    .fixed-right-visualizations {
+    .fixed-right-visualizations, .fixed-left-facts {
       position: static;
       width: 100%;
       margin-top: 20px;
