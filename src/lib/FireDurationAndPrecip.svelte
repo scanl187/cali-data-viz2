@@ -52,7 +52,27 @@
       d3.select(container).selectAll("svg").remove(); // Clear old svg
       d3.select(container).selectAll(".tooltip").remove(); // Also clear old tooltips
       
-      const svg = d3.select(container)
+      // Create container div with position relative for proper tooltip positioning
+      const containerDiv = d3.select(container)
+        .style("position", "relative");
+        
+      // Create tooltip FIRST - important for z-index and event handling
+      const tooltip = containerDiv
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0)
+        .style("position", "absolute")
+        .style("background", "#fff")
+        .style("border", "1px solid #ccc")
+        .style("border-radius", "4px")
+        .style("padding", "8px")
+        .style("pointer-events", "none")
+        .style("z-index", "1000") // Ensure high z-index
+        .style("font-family", "sans-serif")
+        .style("font-size", "12px")
+        .style("box-shadow", "0 0 6px rgba(0, 0, 0, 0.3)");
+      
+      const svg = containerDiv
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -140,19 +160,6 @@
         .domain(["LOW", "MEDIUM", "HIGH"])
         .range(["#ff6b6b", "#4dabf7", "#51cf66"]);
       
-      // Create tooltip
-      const tooltip = d3.select(container)
-        .append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0)
-        .style("position", "absolute")
-        .style("background", "#fff")
-        .style("border", "1px solid #ccc")
-        .style("border-radius", "4px")
-        .style("padding", "8px")
-        .style("pointer-events", "none")
-        .style("z-index", "100");
-      
       // Draw scatter points
       svg.selectAll("circle")
         .data(cleanData)
@@ -166,13 +173,18 @@
         .attr("stroke-width", 1)
         .attr("opacity", 0.7)
         .on("mouseover", function(event, d) {
+          // Highlight the point
           d3.select(this)
             .attr("r", 7) // Reduced from 8
             .attr("opacity", 1);
           
-          tooltip.style("opacity", 0.9);
-        })
-        .on("mousemove", function(event, d) {
+          // Show tooltip
+          tooltip
+            .transition()
+            .duration(200)
+            .style("opacity", 1);
+            
+          // Set tooltip content
           tooltip.html(
             `<strong>${d.Name || "Unnamed Fire"}</strong><br>
             <hr style="margin: 4px 0">
@@ -182,16 +194,41 @@
             <span style="font-weight: bold">Normalized Precip:</span> ${d.average_precip_norm.toFixed(1)}<br>
             ${d.AcresBurned ? `<span style="font-weight: bold">Acres Burned:</span> ${d.AcresBurned.toLocaleString()}<br>` : ""}
             ${d.StructuresDestroyed ? `<span style="font-weight: bold">Structures Destroyed:</span> ${d.StructuresDestroyed}<br>` : ""}`
-          )
-          .style("left", `${event.pageX + 10}px`)
-          .style("top", `${event.pageY - 10}px`);
+          );
+            
+          // Position tooltip
+          const tooltipWidth = tooltip.node().offsetWidth;
+          const tooltipHeight = tooltip.node().offsetHeight;
+          
+          // Calculate container's absolute position for proper tooltip positioning
+          const containerRect = container.getBoundingClientRect();
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+          
+          // Position tooltip relative to mouse and scroll position
+          let tooltipX = event.pageX - containerRect.left - scrollLeft + 10;
+          let tooltipY = event.pageY - containerRect.top - scrollTop - 10;
+          
+          // Ensure tooltip stays within container bounds
+          if (tooltipX + tooltipWidth > containerRect.width) {
+            tooltipX = event.pageX - containerRect.left - scrollLeft - tooltipWidth - 10;
+          }
+          
+          tooltip
+            .style("left", `${tooltipX}px`)
+            .style("top", `${tooltipY}px`);
         })
         .on("mouseout", function() {
+          // Restore point appearance
           d3.select(this)
             .attr("r", 4) // Reduced from 5
             .attr("opacity", 0.7);
           
-          tooltip.style("opacity", 0);
+          // Hide tooltip
+          tooltip
+            .transition()
+            .duration(500)
+            .style("opacity", 0);
         });
       
       // Add legend for precipitation buckets
@@ -240,11 +277,16 @@
       align-items: center;
     }
     
-    .tooltip {
-      font-family: sans-serif;
-      font-size: 12px;
-      border-radius: 4px;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+    /* Ensure tooltip is visible */
+    :global(.tooltip) {
+      font-family: sans-serif !important;
+      font-size: 12px !important;
+      border-radius: 4px !important;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.3) !important;
+      background: white !important;
+      color: #333 !important;
+      z-index: 1000 !important;
+      pointer-events: none !important;
     }
   </style>
   

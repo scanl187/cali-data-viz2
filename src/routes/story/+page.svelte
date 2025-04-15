@@ -1,6 +1,7 @@
 <script lang="ts">
   import Scroll from "$lib/Scroll.svelte";
   import { slide, fly } from "svelte/transition";
+  import { fade } from 'svelte/transition';
   import Seasons from "$lib/Seasons.svelte";
   import SeasonsOld from "$lib/SeasonsOld.svelte";
   import CountyHeatmap from "$lib/CountyHeatmap.svelte";
@@ -16,6 +17,31 @@
 
   let showTeam = $state(false);
   let screenWidth = $state(0);
+
+  function getQuestionText() {
+    if (activeSection === "ENVIRONMENTAL") {
+      return "How do climate factors like temperature, and wind influence wildfire frequency and severity?";
+    } else if (activeSection === "GEOGRAPHICAL") {
+      return "How have California wildfires evolved over time in terms of frequency, size, and severity?";
+    } else if (activeSection === "SEASONAL") {
+      return "How do seasonal changes influence wildfire frequency and severity?";
+    }
+    return "";
+  }
+  
+  // Process text into array of characters
+  let questionText = $derived(getQuestionText());
+  let showQuestion = $derived(progress > 1 && progress < 10);
+  let showVisualizations = $derived(progress >= 10);
+  
+  // Calculate question container width based on progress
+  let questionContainerClass = $derived(() => {
+    if (progress < 10) {
+      return "col-md-10 question-expanded";
+    } else {
+      return "col-md-6";
+    }
+  });
   
   // Adjust visualization position based on screen size
   onMount(() => {
@@ -134,39 +160,33 @@
 <main class="pt-5 mt-5">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-6">
+      <!-- Question section that starts wider and shrinks -->
+      <div class={questionContainerClass} style="transition: all 0.8s ease;">
         <Scroll bind:progress>
           <div id="virtual"></div>
-          
-          <div slot="viz" class="viz-content">
-            <div class="content">
-              {#if progress > 5}
-                {#if activeSection === "ENVIRONMENTAL"}
-                  <p in:slide={{ duration: 1000, axis: "x", x: 0 }}>
-                    How do climate factors like temperature, and wind influence wildfire
-                    frequency and severity? QUESTION 2 FROM FP2
-                  </p>
-                {:else if activeSection === "GEOGRAPHICAL"}
-                  <p in:slide={{ duration: 1000, axis: "x", x: 0 }}>
-                    How have California wildfires evolved over time in terms of
-                    frequency, size, and severity? QUESTION 1 FROM FP2
-                  </p>
-                {:else if activeSection === "SEASONAL"}
-                  <p in:slide={{ duration: 1000, axis: "x", x: 0 }}>
-                    How do seasonal changes influence wildfire frequency and severity?
-                    QUESTION 2 FROM FP2
-                  </p>
-                {/if}
+          <div></div>
+          <div slot="viz" class="viz-content mt-custom">
+            <div class="content mt-5">
+              {#if showQuestion}
+                <p class="question-text mt-5" 
+                   style="font-size: {Math.max(48 - progress * 5, 12)}px; 
+                          padding: {Math.max(40 - progress * 4, 5)}px;
+                          min-height: {Math.max(200 - progress * 20, 50)}px;
+                          opacity: {Math.max(1 - progress * 0.1, 0.1)};">
+                  {questionText}
+                </p>
               {/if}
             </div>
-          </div>
+          </div>          
         </Scroll>
       </div>
       
+      <!-- Visualization section that appears at progress >= 10 -->
       <div class="col-md-6">
-        <div class="fixed-right-visualizations">
-          {#if progress > 0.4}
-            <div class="viz-container mb-4 mt-4">
+        {#if showVisualizations}
+          <div class="fixed-right-visualizations" 
+               in:fly={{ x: 200, duration: 800, delay: 300 }}>
+            <div class="viz-container mb-4 mt-4 mt-4">
               {#if activeSection === "ENVIRONMENTAL"}
                 <FireDurationAndPrecip />
               {:else if activeSection === "GEOGRAPHICAL"}
@@ -201,8 +221,8 @@
               {/if}
               <p class="small text-muted">Progress: {progress}</p>
             </div>
-          {/if}
-        </div>
+          </div>
+        {/if}
       </div>
     </div>
   </div>
@@ -282,6 +302,11 @@
     height: 300vh;
     background-color: #fef9f6;
   }
+  
+  /* Question expanded state */
+  .question-expanded {
+    margin: 0 auto;
+  }
 
   /* Fixed visualizations on the right */
   .fixed-right-visualizations {
@@ -338,6 +363,27 @@
     transform: translateX(-50%);
     z-index: 1001;
     animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .mt-custom{
+    margin-top: 4rem;
+  }
+
+  .question-text {
+    transition: all 0.5s ease-in-out;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   @keyframes fadeIn {
