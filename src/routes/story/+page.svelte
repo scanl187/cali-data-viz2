@@ -102,46 +102,61 @@ let seasonalVisibleFacts = $derived(seasonalFacts.filter(f =>
 ));
 const wildfireFacts = [
   {
-    year: "Interannual Variability (1992–2007)",
-    text: `• Fluctuating Fire Counts:
-– Years like 1992 and 2007 show significant variation driven by weather extremes.
-– Droughts, heat waves, and shifting precipitation cause dramatic year-to-year changes.`,
+    year: "Early 1990s (Baseline Distribution)",
+    text: `• Wildfire Counts:
+– Fires were moderately distributed across California’s counties, setting a baseline frequency.
+• Burned Acres:
+– Total acreage burned was relatively low, reflecting less extreme weather and limited fuel accumulation across regions.`,
     startProgress: 15,
-    endProgress: 35
+    endProgress: 30
   },
   {
-    year: "Extreme Burned Acreage Swings",
-    text: `• Drastic Year-to-Year Changes:
-– Extreme percentage jumps (e.g., over 210% in 1996; 1343% in 2020) reflect sudden shifts in fire behavior.
-– These fluctuations are linked to rapid changes in temperature, wind, and humidity.`,
-    startProgress: 36,
-    endProgress: 55
+    year: "Mid-2000s (Emergence of Hotspots)",
+    text: `• Wildfire Counts:
+– Certain counties—particularly in Southern California (e.g., Riverside)—began to show significantly higher fire frequencies.
+• Burned Acres:
+– In parallel, burned acreage started increasing in these regions, as hotter, drier conditions and worsening fuel loads led to fires covering larger areas.`,
+    startProgress: 31,
+    endProgress: 50
   },
   {
-    year: "Rising Severity Over Time",
-    text: `• Increasing Burned Area:
-– Despite variable fire counts, the overall trend shows an average annual increase of ~141,000 acres.
-– Extended dry seasons and higher temperatures are making fires more severe.`,
-    startProgress: 56,
-    endProgress: 75
+    year: "Pivotal Year – Late 2000s (2007)",
+    text: `• Wildfire Counts:
+– The record-setting 2007 marked a turning point with 13,377 fires, reflecting a dramatic upsurge in ignition events.
+• Burned Acres:
+– Simultaneously, there was a substantial jump in acres burned, underscoring a shift toward more severe fire events with expansive spatial impact.`,
+    startProgress: 51,
+    endProgress: 65
   },
   {
-    year: "Regional Disparities",
-    text: `• County-Level Differences:
-– High fire counts in Riverside vs. large burned areas in San Diego and Los Angeles.
-– Variations stem from differences in geography, fuel accumulation, and urban interfaces.`,
-    startProgress: 76,
+    year: "Underlying Geographic Drivers",
+    text: `• Wildfire Counts:
+– Regional factors such as urban growth, terrain, and local management practices lead to disparities (e.g., high counts in urban-adjacent Riverside).
+• Burned Acres:
+– Geographic differences in vegetation and wildland continuity mean that counties with vast wildlands (like parts of San Diego and Los Angeles) experience fewer but much larger fires, resulting in notably higher burned acreage.`,
+    startProgress: 66,
+    endProgress: 80
+  },
+  {
+    year: "Conclusion",
+    text: `• Summary of Findings:
+– Over nearly 30 years, the spatial distribution of wildfire activity has evolved considerably.
+– Fire counts increased dramatically in hotspot regions, most notably in 2007, while burned acres surged over time—especially in counties with extensive wildlands.
+– This evolution reflects the combined impacts of climate extremes, historical fire suppression leading to fuel build-up, and inherent geographic differences in vegetation and topography.
+– These insights highlight the need for adaptive fire management strategies that address both ignition reduction and mitigation of large-scale fire spread.`,
+    startProgress: 81,
     endProgress: 90
   },
   {
-    year: "Management & Policy Implications",
-    text: `• Calls for Adaptive Strategies:
-– Research supports integrating fire suppression with proactive fuel management.
-– Policy must evolve to address the combined effects of climate change and historical suppression practices.`,
+    year: "Extreme Burned Acreage Swings (Trivia)",
+    text: `Trivia: Did you know that in some years the total burned acreage surged dramatically—exceeding a 210% increase in one year and reaching an astounding 1343% in another? 
+Imagine the extreme conditions and geographic influences that could drive such shifts!`,
     startProgress: 91,
     endProgress: 100
   }
 ];
+
+
 let wildfireVisibleFacts = $derived(wildfireFacts.filter(f => 
   progress >= f.startProgress && progress <= f.endProgress
 ));
