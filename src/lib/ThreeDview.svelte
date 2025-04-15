@@ -8,7 +8,9 @@
     Terrain,
     createOsmBuildingsAsync,
     Color,
-    GeoJsonDataSource
+    GeoJsonDataSource,
+    VerticalOrigin,
+    JulianDate
   } from "cesium";
   import "cesium/Build/Cesium/Widgets/widgets.css";
 
@@ -17,26 +19,19 @@
   let selectedYear = 2005;
   let availableYears: number[] = [];
 
-  function getColorByAcres(acres: number): Color {
-    if (acres > 10000) return Color.RED;
-    if (acres > 1000) return Color.ORANGE;
-    if (acres > 100) return Color.YELLOW;
-    return Color.GREEN;
-  }
-
   async function updateFires(year: number) {
     viewer.entities.removeAll();
     fireData
-  .filter(d => d.year === year && d.longitude && d.latitude)
+      .filter(d => d.year === year && typeof d.latitude === 'number' && typeof d.longitude === 'number')
       .forEach(d => {
-        viewer.entities.add({
+        const entity = viewer.entities.add({
           name: `Fire ${d.fire_name}`,
           position: Cartesian3.fromDegrees(d.longitude, d.latitude),
-          point: {
-            pixelSize: 6,
-            color: getColorByAcres(d.acres),
-            outlineColor: Color.BLACK,
-            outlineWidth: 1,
+          billboard: {
+            image: '/open-fire-11190_256.gif',
+            width: 16,
+            height: 16,
+            verticalOrigin: VerticalOrigin.BOTTOM
           },
           description: `
             <b>Name:</b> ${d.fire_name}<br/>
@@ -44,6 +39,13 @@
             <b>County:</b> ${d.county}<br/>
             <b>Year:</b> ${d.year}
           `,
+        });
+
+        viewer.scene.postRender.addEventListener(() => {
+          const cameraHeight = viewer.camera.positionCartographic.height;
+          const scale = Math.min(64, Math.max(16, 800000 / cameraHeight));
+          entity.billboard!.width = scale;
+          entity.billboard!.height = scale;
         });
       });
   }
@@ -96,7 +98,6 @@
     const tileset = await createOsmBuildingsAsync();
     viewer.scene.primitives.add(tileset);
 
-    // Load counties
     const countySource = await GeoJsonDataSource.load('/california-counties.geojson');
     countySource.entities.values.forEach(entity => {
       entity.polygon.material = Color.YELLOW.withAlpha(0.1);
