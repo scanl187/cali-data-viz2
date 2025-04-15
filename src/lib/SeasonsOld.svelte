@@ -6,7 +6,6 @@
   export let currentProgress = 0;
 
   let container;
-  let tableContainer;
 
   let data = [];
   let aggData = [];
@@ -69,21 +68,12 @@
     g = svg.append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    x = d3.scaleTime()
-      .range([0, innerWidth]);
+    x = d3.scaleTime().range([0, innerWidth]);
+    y = d3.scaleLinear().range([innerHeight, 0]);
+    color = d3.scaleOrdinal().range(d3.schemeTableau10);
 
-    y = d3.scaleLinear()
-      .range([innerHeight, 0]);
-
-    color = d3.scaleOrdinal()
-      .range(d3.schemeTableau10);
-
-    g.append("g")
-      .attr("class", "x-axis")
-      .attr("transform", `translate(0, ${innerHeight})`);
-
-    g.append("g")
-      .attr("class", "y-axis");
+    g.append("g").attr("class", "x-axis").attr("transform", `translate(0, ${innerHeight})`);
+    g.append("g").attr("class", "y-axis");
 
     drawAxes();
   }
@@ -97,30 +87,19 @@
     const seasons = Array.from(new Set(data.map(d => d.SEASON)));
     color.domain(seasons);
 
-    g.select(".x-axis")
-      .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%Y")));
-
-    g.select(".y-axis")
-      .call(d3.axisLeft(y));
+    g.select(".x-axis").call(d3.axisBottom(x).tickFormat(d3.timeFormat("%Y")));
+    g.select(".y-axis").call(d3.axisLeft(y));
 
     const legend = svg.append("g")
       .attr("transform", `translate(${width - margin.right + 20}, ${margin.top})`);
     seasons.forEach((season, i) => {
       const row = legend.append("g")
         .attr("transform", `translate(0, ${i * 25})`);
-      row.append("rect")
-        .attr("width", 18)
-        .attr("height", 18)
-        .attr("fill", color(season));
-      row.append("text")
-        .attr("x", 25)
-        .attr("y", 14)
-        .style("font-size", "14px")
-        .text(season);
+      row.append("rect").attr("width", 18).attr("height", 18).attr("fill", color(season));
+      row.append("text").attr("x", 25).attr("y", 14).style("font-size", "14px").text(season);
     });
   }
 
-  // Update chart and table reactively based on scroll progress
   $: if (aggData.length > 0) {
     const totalYears = aggData.length;
     currentYearIndex = Math.floor((currentProgress / 100) * totalYears);
@@ -128,7 +107,6 @@
     currentDate = new Date(year, 11, 31);
 
     updateChart(currentDate);
-    updateTable(year);
   }
 
   function updateChart(untilDate) {
@@ -147,57 +125,20 @@
           .y(d => y(d.fire_count))([d0, d1]));
     }
   }
-
-  function updateTable(currentYear) {
-    const filteredAgg = aggData.filter(d => d.YEAR <= currentYear);
-    const displayData = filteredAgg.slice(-7);
-
-    let html = `
-      <table border="1" style="border-collapse: collapse; width:100%;">
-        <tr>
-          <th>Year</th>
-          <th>Total Fires</th>
-          <th>Winter</th>
-          <th>Spring</th>
-          <th>Summer</th>
-          <th>Fall</th>
-        </tr>
-    `;
-    displayData.forEach(row => {
-      html += `
-        <tr>
-          <td>${row.YEAR}</td>
-          <td>${row.total}</td>
-          <td>${row.Winter}</td>
-          <td>${row.Spring}</td>
-          <td>${row.Summer}</td>
-          <td>${row.Fall}</td>
-        </tr>
-      `;
-    });
-    html += `</table>`;
-    d3.select(tableContainer).html(html);
-  }
 </script>
 
 <div style="display: flex; flex-direction: column; align-items: center; max-width: 1200px; margin: auto;">
   <div bind:this={container} style="width: 100%;"></div>
-
   <div class="year-label">
     {#if currentDate}
       <strong>{currentDate.getFullYear()}</strong>
     {/if}
   </div>
-
-  <div bind:this={tableContainer} style="max-width: 800px; margin-top: 20px;"></div>
 </div>
 
 <style>
   svg {
     font-family: sans-serif;
-  }
-  table {
-    font-size: 14px;
   }
   .year-label {
     font-size: 32px;

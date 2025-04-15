@@ -6,6 +6,7 @@
   import CountyHeatmap from "$lib/CountyHeatmap.svelte";
   import ParallelCoordsWithDualCharts from "$lib/ParallelCoordsWithDualCharts.svelte";
   import FireDurationAndPrecip from "$lib/FireDurationAndPrecip.svelte";
+  import HexbinMap from '$lib/HexbinMap.svelte';
   import { onMount } from "svelte";
 
   let progress = $state(0);
@@ -165,11 +166,16 @@
       <div class="col-md-6">
         <div class="fixed-right-visualizations">
           {#if progress > 0.4}
-            <div class="viz-container mb-4">
+            <div class="viz-container mb-4 mt-4">
               {#if activeSection === "ENVIRONMENTAL"}
                 <FireDurationAndPrecip />
               {:else if activeSection === "GEOGRAPHICAL"}
-                <p>Insert Geographical Visualization #1</p>
+              <HexbinMap
+              csvPath="/fire_points.csv"
+              geojsonPath="/california-counties.geojson"
+              {progress}
+            />
+            
               {:else if activeSection === "SEASONAL"}
                 <Seasons
                   csvPath="/fire_climate_data.csv"
@@ -186,11 +192,12 @@
                 <CountyHeatmap
                   csvPath="/corr_heatmap_county.csv"
                   initialStartYear={1992}
-                  initialEndYear={2000}
+                  initialEndYear={2020}
                   initialTopN={5}
+                  {progress}
                 />
               {:else if activeSection === "SEASONAL"}
-                <SeasonsOld csvPath="/fire_climate_data.csv" />
+              <SeasonsOld csvPath="/fire_climate_data.csv" currentProgress={progress} />
               {/if}
               <p class="small text-muted">Progress: {progress}</p>
             </div>
