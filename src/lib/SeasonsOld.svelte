@@ -14,7 +14,7 @@
   let currentYearIndex = 0;
 
   const margin = { top: 60, right: 150, bottom: 60, left: 80 };
-  const width = 800, height = 400;
+  const width = 600, height = 300;
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -100,14 +100,18 @@
     });
   }
 
-  $: if (aggData.length > 0) {
-    const totalYears = aggData.length;
-    currentYearIndex = Math.floor((currentProgress / 100) * totalYears);
-    const year = aggData[Math.min(currentYearIndex, totalYears - 1)].YEAR;
-    currentDate = new Date(year, 11, 31);
+  $: if (aggData.length > 0 && currentProgress >= 12) {
+  const totalYears = aggData.length;
+  const progressAfterThreshold = currentProgress - 12;
+  const remainingProgress = 100 - 12;
+  const adjustedIndex = Math.floor((progressAfterThreshold / remainingProgress) * totalYears);
+  currentYearIndex = Math.max(0, adjustedIndex);
+  const year = aggData[Math.min(currentYearIndex, totalYears - 1)].YEAR;
+  currentDate = new Date(year, 11, 31);
 
-    updateChart(currentDate);
-  }
+  updateChart(currentDate);
+}
+
 
   function updateChart(untilDate) {
     const filtered = data.filter(d => d.date <= untilDate);
@@ -129,25 +133,10 @@
 
 <div style="display: flex; flex-direction: column; align-items: center; max-width: 1200px; margin: auto;">
   <div bind:this={container} style="width: 100%;"></div>
-  <div class="year-label">
-    {#if currentDate}
-      <strong>{currentDate.getFullYear()}</strong>
-    {/if}
-  </div>
 </div>
 
 <style>
   svg {
     font-family: sans-serif;
-  }
-  .year-label {
-    font-size: 32px;
-    font-weight: 900;
-    color: #3e2c28;
-    background: rgba(255, 255, 255, 0.85);
-    padding: 8px 16px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-top: 10px;
   }
 </style>

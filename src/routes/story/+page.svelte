@@ -256,11 +256,14 @@
               {#if activeSection === "ENVIRONMENTAL"}
                 <FireDurationAndPrecip {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
-                <HexbinMap
-                  csvPath="/fire_points.csv"
-                  geojsonPath="/california-counties.geojson"
-                  {progress}
-                />
+
+              <HexbinMap
+              csvPath="/fire_points_updated.csv"
+              geojsonPath="/california-counties.geojson"
+              {progress}
+            />
+            
+
               {:else if activeSection === "SEASONAL"}
                 <Seasons
                   csvPath="/fire_climate_data.csv"
@@ -275,7 +278,7 @@
                 <ParallelCoordsWithDualCharts {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
                 <CountyHeatmap
-                  csvPath="/corr_heatmap_county.csv"
+                  csvPath="/fire_points_updated.csv"
                   initialStartYear={1992}
                   initialEndYear={2020}
                   initialTopN={5}
