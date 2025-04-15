@@ -172,31 +172,19 @@
       .attr("opacity", 0.2);
   }
 
-  // SCROLL SYNC & OPACITY CONTROL
-  $: if (aggData.length > 0 && currentProgress != null) {
-  const step = 100 / aggData.length;
-  const snappedIndex = Math.floor(currentProgress / step);
-  const yearData = aggData[snappedIndex];
+  $: if (aggData.length > 0) {
+    const totalYears = aggData.length;
+    const indexToShow = Math.floor((currentProgress / 100) * totalYears);
+    currentYearIndex = Math.min(totalYears - 1, indexToShow);
 
-  // draw all lines up to snappedIndex
-  for (let i = 0; i <= snappedIndex; i++) {
-    const year = aggData[i].YEAR;
-    const sel = g.select(`.year-${year}`);
-    if (sel.empty()) {
-      drawSegmentedLine(aggData[i], 0.3);
+    g.selectAll(".year-line-group").remove();
+
+    for (let i = 0; i <= currentYearIndex; i++) {
+      drawSegmentedLine(aggData[i], i === currentYearIndex ? 1.0 : 0.3);
     }
   }
-
-  // highlight only current
-  g.selectAll(".year-line-group").attr("opacity", 0.1);
-  g.select(`.year-${yearData.YEAR}`).attr("opacity", 1.0);
-
-  currentYearIndex = snappedIndex;
-}
-
 </script>
 
-<!-- Layout -->
 <div style="display: flex; max-width: 1280px; margin: auto; position: relative;">
   <div bind:this={container} style="flex: 1; position: relative;"></div>
   <div class="year-label">
