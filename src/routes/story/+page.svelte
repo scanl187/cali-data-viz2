@@ -447,13 +447,13 @@ Imagine the extreme conditions and geographic influences that could drive such s
                 <FireDurationAndPrecip {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
                 <HexbinMap
-                  csvPath="/fire_points_updated.csv"
-                  geojsonPath="/california-counties.geojson"
+                  csvPath="./fire_points_updated.csv"
+                  geojsonPath="./california-counties.geojson"
                   {progress}
                 />
               {:else if activeSection === "SEASONAL"}
                 <Seasons
-                  csvPath="/fire_climate_data.csv"
+                  csvPath="./fire_climate_data.csv"
                   currentProgress={progress}
                 />
               {/if}
@@ -465,7 +465,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
                 <ParallelCoordsWithDualCharts {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
                 <CountyHeatmap
-                  csvPath="/fire_points_updated.csv"
+                  csvPath="./fire_points_updated.csv"
                   initialStartYear={1992}
                   initialEndYear={2020}
                   initialTopN={5}
@@ -473,7 +473,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
                 />
               {:else if activeSection === "SEASONAL"}
                 <SeasonsOld
-                  csvPath="/fire_climate_data.csv"
+                  csvPath="./fire_climate_data.csv"
                   currentProgress={progress}
                 />
               {/if}
