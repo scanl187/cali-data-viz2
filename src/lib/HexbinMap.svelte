@@ -12,8 +12,8 @@
   const yearExtent = [2000, 2023];
   $: selectedYear = yearExtent[0] + Math.round((progress / 100) * (yearExtent[1] - yearExtent[0]));
 
-  const width = 1000;
-  const height = 900;
+  const width = 850;
+  const height = 600;
 
   const countyLayout = [
     { name: "Del Norte", col: 3, row: 0 },
@@ -74,13 +74,16 @@
     { name: "San Diego", col: 5, row: 13 }
   ];
 
-  const hexRadius = 40;
+  const hexRadius = 25;
   const hexWidth = Math.sqrt(3) * hexRadius;
   const hexHeight = 2 * hexRadius * 0.75;
+
+  let overallMax = 1;
 
   onMount(async () => {
     const raw = await d3.csv("./fire_points.csv", d3.autoType);
     data = raw.filter((d) => d.latitude && d.longitude && d.county);
+    overallMax = d3.max(data, d => d.acres) || 1;
   });
 
   $: if (svg && data.length && selectedYear !== undefined) {
@@ -110,7 +113,7 @@
     );
 
     const color = d3.scaleSequential(d3.interpolateReds)
-      .domain([0, d3.max([...acresByCounty.values()]) || 1]);
+      .domain([0, overallMax]);
 
     const hexPath = drawHexagonPath(hexRadius);
 
@@ -130,13 +133,14 @@
         .attr("y", yOffset + 4)
         .text(name)
         .attr("text-anchor", "middle")
-        .attr("font-size", 10)
+        .attr("font-size", 8)
         .attr("fill", "#222");
     });
 
     const legendHeight = 150;
     const legendWidth = 12;
     const gradientId = "legend-gradient";
+    const legendX = width - 200;
 
     const defs = svgSel.append("defs");
     const gradient = defs.append("linearGradient")
@@ -145,28 +149,35 @@
       .attr("x2", "0%").attr("y2", "0%");
 
     const stops = d3.range(0, 1.01, 0.1);
-    const maxAcres = d3.max([...acresByCounty.values()]) || 1;
     stops.forEach((s) => {
       gradient.append("stop")
         .attr("offset", `${s * 100}%`)
-        .attr("stop-color", color(s * maxAcres));
+        .attr("stop-color", color(s * overallMax));
     });
 
     svgSel.append("rect")
-      .attr("x", width - 60)
+      .attr("x", legendX)
       .attr("y", 20)
       .attr("width", legendWidth)
       .attr("height", legendHeight)
       .style("fill", `url(#${gradientId})`);
 
     const legendScale = d3.scaleLinear()
-      .domain([0, maxAcres])
+      .domain([0, overallMax])
       .range([legendHeight, 0]);
 
     const legendAxis = d3.axisRight(legendScale).ticks(5);
     svgSel.append("g")
-      .attr("transform", `translate(${width - 48}, 20)`)
+      .attr("transform", `translate(${legendX + legendWidth + 8}, 20)`)
       .call(legendAxis);
+
+    svgSel.append("text")
+      .attr("x", legendX - 10)
+      .attr("y", 14)
+      .attr("text-anchor", "start")
+      .attr("font-size", "12px")
+      .attr("fill", "#333")
+      .text("Acres burned");
   }
 </script>
 
