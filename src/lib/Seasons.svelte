@@ -77,7 +77,7 @@
       .domain(["Winter", "Spring", "Summer", "Fall"])
       .range(d3.schemeTableau10);
 
-    tooltip = d3.select(container)
+    tooltip = d3.select("body")
       .append("div")
       .attr("class", "tooltip")
       .style("opacity", 0)

@@ -48,7 +48,7 @@
     {
       year: "Early 1990s (Baseline: 1992–1995)",
       text: `• Moderate Fire Activity:
-– Winter fire counts: typically between 30–160 (e.g., 1992: January 92, February 54, December 101).
+– Winter fire counts: typically between 100–400 (e.g., 1992: January 92, February 54, December 101; total for winter=247).
 – Summer peak: consistently high (e.g., 1992: June 2185, July 2062, August 2284).
 – Overall totals (e.g., 1995: ~7,381 fires) set the baseline with lower fuel accumulation.`,
       startProgress: 15,
@@ -61,7 +61,7 @@
 • Initial Winter Shift:
 – Winter counts begin to rise (e.g., 2006: January 240, December 400), hinting at altered precipitation and warming trends.
 • Fuel Build-Up Notice:
-– Decades of fire suppression mean denser, more abundant fuels are now present.`,
+– Decades of fire suppression mean denser, more abundant fuels(shrubs and vegetation) are now present.`,
       startProgress: 36,
       endProgress: 55,
     },
@@ -70,7 +70,7 @@
       text: `• Sharp Increase in Overall Fires:
 – Estimated total in 2007 ≈ 13,428 fires, a dramatic jump from baseline.
 • Atypical Winter Behavior:
-– Winter anomalies with January 2007 hitting 703 fires, far exceeding previous winter levels.
+– Winter anomalies with January 2007 hitting 1400+ fires, far exceeding previous winter levels.
 • Sustained High Summer Activity:
 – Continued high counts in July (≈2283) and August (≈1819) reinforce extreme summer conditions.`,
       startProgress: 56,
@@ -81,7 +81,7 @@
       text: `• Fuel Accumulation & Historical Fire Suppression:
 – Decades of reduced wildfire occurrence have allowed fine fuels and vegetation to build up.
 • Climate Change – Extreme Fire Weather:
-– Rising temperatures, lower humidity, and extended dry seasons (as noted by Wired and OEHHA) have increased the frequency of extreme fire weather days.
+– Rising temperatures, lower humidity, and extended dry seasons (California was affected by droughts from 2007-09) have increased the frequency of extreme fire weather days.
 • Altered Seasonal Precipitation Patterns:
 – Delayed or reduced winter rains extend the period during which fuels remain dry, leading to uncharacteristic winter fire activity (observed in 2007 and parts of the 2010s).
 • Enhanced Lightning Activity:
@@ -447,13 +447,13 @@ Imagine the extreme conditions and geographic influences that could drive such s
                 <FireDurationAndPrecip {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
                 <HexbinMap
-                  csvPath="/fire_points_updated.csv"
-                  geojsonPath="/california-counties.geojson"
+                  csvPath="./fire_points_updated.csv"
+                  geojsonPath="./california-counties.geojson"
                   {progress}
                 />
               {:else if activeSection === "SEASONAL"}
                 <Seasons
-                  csvPath="/fire_climate_data.csv"
+                  csvPath="./fire_climate_data.csv"
                   currentProgress={progress}
                 />
               {/if}
@@ -465,7 +465,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
                 <ParallelCoordsWithDualCharts {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
                 <CountyHeatmap
-                  csvPath="/fire_points_updated.csv"
+                  csvPath="./fire_points_updated.csv"
                   initialStartYear={1992}
                   initialEndYear={2020}
                   initialTopN={5}
@@ -473,7 +473,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
                 />
               {:else if activeSection === "SEASONAL"}
                 <SeasonsOld
-                  csvPath="/fire_climate_data.csv"
+                  csvPath="./fire_climate_data.csv"
                   currentProgress={progress}
                 />
               {/if}

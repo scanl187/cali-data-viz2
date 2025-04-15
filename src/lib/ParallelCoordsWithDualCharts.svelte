@@ -51,9 +51,9 @@
       const weatherData = await d3.csv("./CA_Weather_Fire_Dataset_1984-2025.csv", d3.autoType);
       const fireData = await d3.csv("./fire_points.csv", d3.autoType);
 
-      precipData = await d3.csv('/yearly_precip_fire.csv', d3.autoType);
-      tempData = await d3.csv('/yearly_avgtemp_fire.csv', d3.autoType);
-      windData = await d3.csv('/yearly_windspeed_fire.csv', d3.autoType);
+      precipData = await d3.csv('./yearly_precip_fire.csv', d3.autoType);
+      tempData = await d3.csv('./yearly_avgtemp_fire.csv', d3.autoType);
+      windData = await d3.csv('./yearly_windspeed_fire.csv', d3.autoType);
 
       const fireCounts = d3.rollup(fireData, v => v.length, d => d.year);
 
