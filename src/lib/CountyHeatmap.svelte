@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import * as d3 from 'd3';
 
-  export let csvPath = '/corr_heatmap_county.csv';
+  export let csvPath = '/fire_points_updated.csv';
   export let initialStartYear = 1992;
   export let initialEndYear = 2020;
   export let initialTopN = 10;
@@ -15,27 +15,24 @@
   let allYears = [];
   let topN = initialTopN;
 
+  export let metric: 'count' | 'acres' = 'count';
+
   const cellWidth = 75;
-  const cellHeight = 26;
+  const cellHeight = 20;
 
-  // Recalculate rows to show when progress or topN changes
-  $: if (allYears.length) {
-    const yearsToShow = Math.floor(((progress || 0) / 100) * (initialEndYear - initialStartYear + 1));
-    const visibleYears = allYears.slice(0, Math.max(1, yearsToShow));
-    updateHeatmap(visibleYears);
-  }
-
-  $: if (topN && allYears.length) {
-    const yearsToShow = Math.floor(((progress || 0) / 100) * (initialEndYear - initialStartYear + 1));
-    const visibleYears = allYears.slice(0, Math.max(1, yearsToShow));
+  $: if (topN && allYears.length && progress >= 12) {
+    const progressAfterThreshold = progress - 12;
+    const remainingProgress = 100 - 12;
+    const yearsToShow = Math.floor((progressAfterThreshold / remainingProgress) * (initialEndYear - initialStartYear));
+    const visibleYears = allYears.slice(0, yearsToShow + 1);
     updateHeatmap(visibleYears);
   }
 
   onMount(async () => {
     rawData = await d3.csv(csvPath, d => ({
       county: d.county,
-      year: +d.FIRE_YEAR,
-      fire_count: +d.fire_count
+      year: +d.year,
+      acres: +d.acres || 0
     }));
 
     allYears = Array.from(new Set(rawData.map(d => d.year)))
@@ -48,7 +45,7 @@
 
     const countyTotals = d3.rollups(
       filtered,
-      v => d3.sum(v, d => d.fire_count),
+      v => metric === 'count' ? v.length : d3.sum(v, d => d.acres),
       d => d.county
     ).sort((a, b) => b[1] - a[1]);
 
@@ -57,12 +54,10 @@
     heatmapData = [];
     selectedYears.forEach(year => {
       topCounties.forEach(county => {
-        const match = rawData.find(d => d.county === county && d.year === year);
-        heatmapData.push({
-          county,
-          year,
-          fire_count: match ? match.fire_count : 0
-        });
+        const val = metric === 'count'
+          ? filtered.filter(d => d.county === county && d.year === year).length
+          : d3.sum(filtered.filter(d => d.county === county && d.year === year), d => d.acres);
+        heatmapData.push({ county, year, fire_count: val });
       });
     });
 
@@ -72,7 +67,7 @@
   function draw(countyOrder, yYears) {
     d3.select(container).selectAll('*').remove();
 
-    const margin = { top: 160, right: 20, bottom: 40, left: 80 };
+    const margin = { top: 80, right: 20, bottom: 40, left: 80 };
     const width = margin.left + margin.right + cellWidth * countyOrder.length;
     const height = margin.top + margin.bottom + cellHeight * yYears.length;
 
@@ -119,7 +114,7 @@
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("font-size", "12px")
-      .text(d => d.fire_count > 0 ? d.fire_count : '');
+      .text(d => d.fire_count > 0 ? Math.round(d.fire_count) : '');
 
     svg.append("g")
       .attr("transform", `translate(${margin.left},${margin.top - 10})`)
@@ -151,14 +146,20 @@
   }
 </script>
 
-<!-- UI Controls -->
+<!-- Toggle UI -->
+<div style="text-align:center; margin-bottom: 0.5rem;">
+  <label><input type="radio" bind:group={metric} value="count" /> Count</label>
+  <label style="margin-left: 1rem;"><input type="radio" bind:group={metric} value="acres" /> Acres</label>
+</div>
+
+<!-- Top N Input -->
 <div style="text-align: center; margin-bottom: 1rem;">
   <label>Top N Counties:
     <input type="number" bind:value={topN} min="1" max="58" />
   </label>
 </div>
 
-<!-- Chart -->
+<!-- Heatmap -->
 <div bind:this={container} style="overflow-x: auto; overflow-y: auto; max-width: 100%; max-height: 800px; margin: auto;"></div>
 
 <style>

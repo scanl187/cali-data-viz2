@@ -4,13 +4,16 @@
   import * as d3 from "d3";
 
   export let progress = 0;
+  export let metric = 'acres'; // 'acres' or 'count'
 
   let svg;
   let data = [];
-  let counties = [];
 
-  const yearExtent = [2000, 2023];
-  $: selectedYear = yearExtent[0] + Math.round((progress / 100) * (yearExtent[1] - yearExtent[0]));
+  const yearExtent = [1992, 2020];
+
+  $: selectedYear = progress >= 12
+    ? yearExtent[0] + Math.round(((progress - 12) / (100 - 12)) * (yearExtent[1] - yearExtent[0]))
+    : undefined;
 
   const width = 850;
   const height = 600;
@@ -81,12 +84,12 @@
   let overallMax = 1;
 
   onMount(async () => {
-    const raw = await d3.csv("./fire_points.csv", d3.autoType);
+    const raw = await d3.csv("./fire_points_updated.csv", d3.autoType);
     data = raw.filter((d) => d.latitude && d.longitude && d.county);
-    overallMax = d3.max(data, d => d.acres) || 1;
+    overallMax = d3.max(data, d => metric === 'acres' ? d.acres : 1) || 1;
   });
 
-  $: if (svg && data.length && selectedYear !== undefined) {
+  $: if (svg && data.length && progress >= 12 && selectedYear !== undefined) {
     drawHexMap();
   }
 
@@ -106,14 +109,15 @@
     svgSel.selectAll("*").remove();
 
     const yearData = data.filter((d) => d.year === selectedYear);
-    const acresByCounty = d3.rollup(
+    const valueByCounty = d3.rollup(
       yearData,
-      (v) => d3.sum(v, (d) => d.acres),
+      (v) => metric === 'acres' ? d3.sum(v, d => d.acres) : v.length,
       (d) => d.county
     );
 
+    const localMax = d3.max(Array.from(valueByCounty.values()));
     const color = d3.scaleSequential(d3.interpolateReds)
-      .domain([0, overallMax]);
+      .domain([0, localMax || 1]);
 
     const hexPath = drawHexagonPath(hexRadius);
 
@@ -124,7 +128,7 @@
       svgSel.append("path")
         .attr("d", hexPath)
         .attr("transform", `translate(${xOffset},${yOffset})`)
-        .attr("fill", color(acresByCounty.get(name) || 0))
+        .attr("fill", color(valueByCounty.get(name) || 0))
         .attr("stroke", "#fff")
         .attr("stroke-width", 0.8);
 
@@ -152,7 +156,7 @@
     stops.forEach((s) => {
       gradient.append("stop")
         .attr("offset", `${s * 100}%`)
-        .attr("stop-color", color(s * overallMax));
+        .attr("stop-color", color(s * localMax));
     });
 
     svgSel.append("rect")
@@ -163,7 +167,7 @@
       .style("fill", `url(#${gradientId})`);
 
     const legendScale = d3.scaleLinear()
-      .domain([0, overallMax])
+      .domain([0, localMax])
       .range([legendHeight, 0]);
 
     const legendAxis = d3.axisRight(legendScale).ticks(5);
@@ -177,13 +181,21 @@
       .attr("text-anchor", "start")
       .attr("font-size", "12px")
       .attr("fill", "#333")
-      .text("Acres burned");
+      .text(metric === 'acres' ? "Acres burned" : "Fire count");
   }
 </script>
 
-<div class="year-label">
-  <strong>Year:</strong> {selectedYear}
+<!-- Toggle -->
+<div style="text-align:center; margin-bottom: 0.5rem;">
+  <label><input type="radio" bind:group={metric} value="count" /> Count</label>
+  <label style="margin-left: 1rem;"><input type="radio" bind:group={metric} value="acres" /> Acres</label>
 </div>
+
+{#if selectedYear}
+  <div class="year-label">
+    <strong>Year:</strong> {selectedYear}
+  </div>
+{/if}
 
 <svg bind:this={svg}></svg>
 

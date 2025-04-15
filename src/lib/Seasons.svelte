@@ -13,7 +13,7 @@
   let svg, g, x, y, seasonColor;
 
   const margin = { top: 60, right: 150, bottom: 60, left: 80 };
-  const width = 800, height = 400;
+  const width = 600, height = 300;
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -172,17 +172,21 @@
       .attr("opacity", 0.2);
   }
 
-  $: if (aggData.length > 0) {
-    const totalYears = aggData.length;
-    const indexToShow = Math.floor((currentProgress / 100) * totalYears);
-    currentYearIndex = Math.min(totalYears - 1, indexToShow);
+  $: if (aggData.length > 0 && currentProgress >= 12) {
+  const totalYears = aggData.length;
+  const progressAfterThreshold = currentProgress - 12;
+  const remainingProgress = 100 - 12;
+  const adjustedIndex = Math.floor((progressAfterThreshold / remainingProgress) * totalYears);
 
-    g.selectAll(".year-line-group").remove();
+  currentYearIndex = Math.min(totalYears - 1, Math.max(0, adjustedIndex));
 
-    for (let i = 0; i <= currentYearIndex; i++) {
-      drawSegmentedLine(aggData[i], i === currentYearIndex ? 1.0 : 0.3);
-    }
+  g.selectAll(".year-line-group").remove();
+
+  for (let i = 0; i <= currentYearIndex; i++) {
+    drawSegmentedLine(aggData[i], i === currentYearIndex ? 1.0 : 0.3);
   }
+}
+
 </script>
 
 <div style="display: flex; max-width: 1280px; margin: auto; position: relative;">
