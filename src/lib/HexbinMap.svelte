@@ -17,8 +17,8 @@
     ? yearExtent[0] + Math.round(((progress - 12) / (100 - 12)) * (yearExtent[1] - yearExtent[0]))
     : undefined;
 
-  const width = 850;
-  const height = 600;
+  const width = 650;
+  const height = 650;
 
   const countyLayout = [
     { name: "Del Norte", col: 3, row: 0 },
