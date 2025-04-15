@@ -7,6 +7,8 @@
   export let metric = 'acres'; // 'acres' or 'count'
 
   let svg;
+  let tooltip;
+
   let data = [];
 
   const yearExtent = [1992, 2020];
@@ -90,6 +92,19 @@
     const raw = await d3.csv("./fire_points_updated.csv", d3.autoType);
     data = raw.filter((d) => d.latitude && d.longitude && d.county);
     overallMax = d3.max(data, d => metric === 'acres' ? d.acres : 1) || 1;
+    tooltip = d3.select("body")
+  .append("div")
+  .attr("class", "hex-tooltip")
+  .style("opacity", 0)
+  .style("position", "absolute")
+  .style("pointer-events", "none")
+  .style("background", "#222")
+  .style("color", "#fff")
+  .style("padding", "8px 12px")
+  .style("border-radius", "6px")
+  .style("font-size", "14px")
+  .style("z-index", 9999);
+
   });
 
   $: if (svg && data.length && progress >= 12 && selectedYear !== undefined) {
@@ -128,12 +143,28 @@
       const xOffset = col * hexWidth + (row % 2 === 0 ? 0 : hexWidth / 2) + 60;
       const yOffset = row * hexHeight + 60;
 
-      svgSel.append("path")
-        .attr("d", hexPath)
-        .attr("transform", `translate(${xOffset},${yOffset})`)
-        .attr("fill", color(valueByCounty.get(name) || 0))
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 0.8);
+      const value = valueByCounty.get(name) || 0;
+
+svgSel.append("path")
+  .attr("d", hexPath)
+  .attr("transform", `translate(${xOffset},${yOffset})`)
+  .attr("fill", color(value))
+  .attr("stroke", "#fff")
+  .attr("stroke-width", 0.8)
+  .on("mouseover", function () {
+    tooltip
+      .html(`<strong>${name}</strong><br>${metric === 'acres' ? 'Acres Burned' : 'Fire Count'}: ${Math.round(value)}`)
+      .style("opacity", 1);
+  })
+  .on("mousemove", function (event) {
+    tooltip
+      .style("left", `${event.pageX + 15}px`)
+      .style("top", `${event.pageY - 30}px`);
+  })
+  .on("mouseout", function () {
+    tooltip.style("opacity", 0);
+  });
+
 
       svgSel.append("text")
         .attr("x", xOffset)
@@ -209,4 +240,8 @@
     margin-bottom: 10px;
     color: #3e2c28;
   }
+  .hex-tooltip {
+  transition: opacity 0.2s ease-in-out;
+}
+
 </style>
