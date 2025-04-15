@@ -89,6 +89,9 @@
   }
 
   onMount(async () => {
+
+    (window as any).CESIUM_BASE_URL = import.meta.env.BASE_URL + 'Cesium';
+
     Ion.defaultAccessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2YTZlNTY2Zi1mNGY1LTQ2Y2EtYTA1ZS0xZmFhZjYwZGI5NDYiLCJpZCI6Mjk0MDQxLCJpYXQiOjE3NDQ2NTA0MzR9.noUc-GDwJGe5SCmqKtr4P0UnGgnu2f3bx9ww6DolHzY";
 
@@ -119,7 +122,7 @@
     });
     viewer.dataSources.add(countySource);
 
-    const res = await fetch("/fire_points_updated.csv");
+    const res = await fetch("./fire_points_updated.csv");
     const text = await res.text();
     fireData = parseCSV(text);
     availableYears = [...new Set(fireData.map((d) => +d.year))].sort();
