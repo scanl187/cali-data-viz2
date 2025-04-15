@@ -188,7 +188,7 @@
                in:fly={{ x: 200, duration: 800, delay: 300 }}>
             <div class="viz-container mb-4 mt-4 mt-4">
               {#if activeSection === "ENVIRONMENTAL"}
-                <FireDurationAndPrecip />
+                <FireDurationAndPrecip {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
               <HexbinMap
               csvPath="/fire_points.csv"
@@ -207,7 +207,7 @@
 
             <div class="viz-container">
               {#if activeSection === "ENVIRONMENTAL"}
-                <ParallelCoordsWithDualCharts />
+                <ParallelCoordsWithDualCharts {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
                 <CountyHeatmap
                   csvPath="/corr_heatmap_county.csv"
