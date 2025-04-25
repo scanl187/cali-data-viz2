@@ -13,7 +13,7 @@
   let svg, g, x, y, seasonColor;
 
   const margin = { top: 60, right: 150, bottom: 60, left: 80 };
-  const width = 600, height = 300;
+  const width = 800, height = 300;
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -172,7 +172,9 @@
       .attr("opacity", 0.2);
   }
 
-  $: if (aggData.length > 0 && currentProgress >= 12) {
+  let lastDrawnYearIndex = -1;  // Track up to what year we've drawn
+
+$: if (aggData.length > 0 && currentProgress >= 12) {
   const totalYears = aggData.length;
   const progressAfterThreshold = currentProgress - 12;
   const remainingProgress = 100 - 12;
@@ -180,12 +182,21 @@
 
   currentYearIndex = Math.min(totalYears - 1, Math.max(0, adjustedIndex));
 
-  g.selectAll(".year-line-group").remove();
+  // 🆕 Handle forward scrolling
+  while (lastDrawnYearIndex < currentYearIndex) {
+    lastDrawnYearIndex++;
+    drawSegmentedLine(aggData[lastDrawnYearIndex], lastDrawnYearIndex === currentYearIndex ? 1.0 : 0.3);
+  }
 
-  for (let i = 0; i <= currentYearIndex; i++) {
-    drawSegmentedLine(aggData[i], i === currentYearIndex ? 1.0 : 0.3);
+  // 🆕 Handle backward scrolling
+  while (lastDrawnYearIndex > currentYearIndex) {
+    // Remove the extra year-line-group
+    g.selectAll(`.year-${aggData[lastDrawnYearIndex].YEAR}`).remove();
+    lastDrawnYearIndex--;
   }
 }
+
+
 
 </script>
 

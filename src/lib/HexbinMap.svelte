@@ -17,8 +17,15 @@
     ? yearExtent[0] + Math.round(((progress - 12) / (100 - 12)) * (yearExtent[1] - yearExtent[0]))
     : undefined;
 
-  const width = 650;
+  const width = 570;
   const height = 650;
+  function getReadableTextColor(backgroundColor) {
+  const rgb = d3.color(backgroundColor);
+  if (!rgb) return "#000"; // fallback
+  const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+  return brightness > 128 ? "#000" : "#fff";
+}
+
 
   const countyLayout = [
     { name: "Del Norte", col: 3, row: 0 },
@@ -166,13 +173,14 @@ svgSel.append("path")
   });
 
 
-      svgSel.append("text")
-        .attr("x", xOffset)
-        .attr("y", yOffset + 4)
-        .text(name)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 8)
-        .attr("fill", "#222");
+  svgSel.append("text")
+      .attr("x", xOffset)
+      .attr("y", yOffset + 4)
+      .text(name)
+      .attr("text-anchor", "middle")
+      .attr("font-size", 8)
+      .attr("fill", getReadableTextColor(color(value)));
+
     });
 
     const legendHeight = 150;
