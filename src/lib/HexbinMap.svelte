@@ -19,13 +19,13 @@
 
   const width = 570;
   const height = 650;
-  function getReadableTextColor(backgroundColor) {
-  const rgb = d3.color(backgroundColor);
-  if (!rgb) return "#000"; // fallback
-  const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-  return brightness > 128 ? "#000" : "#fff";
-}
 
+  function getReadableTextColor(backgroundColor) {
+    const rgb = d3.color(backgroundColor);
+    if (!rgb) return "#000"; // fallback
+    const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+    return brightness > 128 ? "#000" : "#fff";
+  }
 
   const countyLayout = [
     { name: "Del Norte", col: 3, row: 0 },
@@ -84,9 +84,8 @@
     { name: "Los Angeles", col: 5, row: 12 },
     { name: "Orange", col: 6, row: 12 },
     { name: "San Diego", col: 5, row: 13 },
-    { name: "Riverside", col: 6, row: 13 }, // Just right of San Diego, below San Bernardino
-    { name: "Imperial",  col: 6, row: 14 } // Just below Riverside
-
+    { name: "Riverside", col: 6, row: 13 },
+    { name: "Imperial", col: 6, row: 14 }
   ];
 
   const hexRadius = 25;
@@ -100,21 +99,21 @@
     data = raw.filter((d) => d.latitude && d.longitude && d.county);
     overallMax = d3.max(data, d => metric === 'acres' ? d.acres : 1) || 1;
     tooltip = d3.select("body")
-  .append("div")
-  .attr("class", "hex-tooltip")
-  .style("opacity", 0)
-  .style("position", "absolute")
-  .style("pointer-events", "none")
-  .style("background", "#222")
-  .style("color", "#fff")
-  .style("padding", "8px 12px")
-  .style("border-radius", "6px")
-  .style("font-size", "14px")
-  .style("z-index", 9999);
-
+      .append("div")
+      .attr("class", "hex-tooltip")
+      .style("opacity", 0)
+      .style("position", "absolute")
+      .style("pointer-events", "none")
+      .style("background", "#222")
+      .style("color", "#fff")
+      .style("padding", "8px 12px")
+      .style("border-radius", "6px")
+      .style("font-size", "14px")
+      .style("z-index", 9999);
   });
 
-  $: if (svg && data.length && progress >= 12 && selectedYear !== undefined) {
+  // ✅ Updated reactive block
+  $: if (svg && data.length && progress >= 12 && selectedYear !== undefined && metric) {
     drawHexMap();
   }
 
@@ -152,35 +151,33 @@
 
       const value = valueByCounty.get(name) || 0;
 
-svgSel.append("path")
-  .attr("d", hexPath)
-  .attr("transform", `translate(${xOffset},${yOffset})`)
-  .attr("fill", color(value))
-  .attr("stroke", "#fff")
-  .attr("stroke-width", 0.8)
-  .on("mouseover", function () {
-    tooltip
-      .html(`<strong>${name}</strong><br>${metric === 'acres' ? 'Acres Burned' : 'Fire Count'}: ${Math.round(value)}`)
-      .style("opacity", 1);
-  })
-  .on("mousemove", function (event) {
-    tooltip
-      .style("left", `${event.pageX + 15}px`)
-      .style("top", `${event.pageY - 30}px`);
-  })
-  .on("mouseout", function () {
-    tooltip.style("opacity", 0);
-  });
+      svgSel.append("path")
+        .attr("d", hexPath)
+        .attr("transform", `translate(${xOffset},${yOffset})`)
+        .attr("fill", color(value))
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 0.8)
+        .on("mouseover", function () {
+          tooltip
+            .html(`<strong>${name}</strong><br>${metric === 'acres' ? 'Acres Burned' : 'Fire Count'}: ${Math.round(value)}`)
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          tooltip
+            .style("left", `${event.pageX + 15}px`)
+            .style("top", `${event.pageY - 30}px`);
+        })
+        .on("mouseout", function () {
+          tooltip.style("opacity", 0);
+        });
 
-
-  svgSel.append("text")
-      .attr("x", xOffset)
-      .attr("y", yOffset + 4)
-      .text(name)
-      .attr("text-anchor", "middle")
-      .attr("font-size", 8)
-      .attr("fill", getReadableTextColor(color(value)));
-
+      svgSel.append("text")
+        .attr("x", xOffset)
+        .attr("y", yOffset + 4)
+        .text(name)
+        .attr("text-anchor", "middle")
+        .attr("font-size", 8)
+        .attr("fill", getReadableTextColor(color(value)));
     });
 
     const legendHeight = 150;
@@ -249,7 +246,6 @@ svgSel.append("path")
     color: #3e2c28;
   }
   .hex-tooltip {
-  transition: opacity 0.2s ease-in-out;
-}
-
+    transition: opacity 0.2s ease-in-out;
+  }
 </style>
