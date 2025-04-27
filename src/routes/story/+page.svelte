@@ -9,7 +9,7 @@
   import FireDurationAndPrecip from "$lib/FireDurationAndPrecip.svelte";
   import HexbinMap from "$lib/HexbinMap.svelte";
   import { onMount } from "svelte";
-    import { base } from "$app/paths";
+  import { base } from "$app/paths";
 
   let progress = $state(0);
 
@@ -21,7 +21,7 @@
 
   function getQuestionText() {
     if (activeSection === "ENVIRONMENTAL") {
-      return "How do climate factors like temperature, and wind influence wildfire frequency and severity?";
+      return "How do climate factors like precipitation, temperature, and wind influence wildfire frequency and severity?";
     } else if (activeSection === "GEOGRAPHICAL") {
       return "How have California wildfires evolved over time in terms of frequency, size, and severity?";
     } else if (activeSection === "SEASONAL") {
@@ -41,7 +41,7 @@
     if (progress < 10) {
       return "col-md-10 question-expanded";
     } else {
-      return "col-md-6";
+      return "col-md-4";
     }
   });
   const seasonalFacts = [
@@ -155,7 +155,7 @@
       text: `Trivia: Did you know that in some years the total burned acreage surged dramatically—exceeding a 210% increase in one year and reaching an astounding 1343% in another? 
 Imagine the extreme conditions and geographic influences that could drive such shifts!`,
       startProgress: 91,
-      endProgress: 100,
+      endProgress: 1000,
     },
   ];
 
@@ -167,27 +167,31 @@ Imagine the extreme conditions and geographic influences that could drive such s
 
   const precipFacts = [
     {
-      year: "2013–2018",
-      text: "2013, 2014, 2015, 2016, 2017 & 2018 were years of low to medium precipitation in California.",
+      year: "2013–2015",
+      text: "These three years saw low to medium precipitation on an average in all of California.",
       startProgress: 15,
-      endProgress: 85,
+      endProgress: 70,
     },
     {
-      year: "2019",
+      year: "2016–2018",
+      text: "2016, 2017 & 2018 were years of low to medium precipitation in California.",
+      startProgress: 46,
+      endProgress: 75,
+    },
+    {
+      year: "Pivotal Year: 2019",
       text: "2019 was a year of high precipitation across California.",
-      startProgress: 86,
-      endProgress: 1000,
+      startProgress: 60,
+      endProgress: 100,
     },
     {
-      year: "Precipitation & Wildfires",
-      text: "Lower precipitation years tend to have increased wildfire activity due to drier vegetation.",
-      startProgress: 91,
-      endProgress: 1000,
-    },
-    {
-      year: "Climate Patterns",
-      text: "Year-to-year precipitation variation shows California's vulnerability to drought cycles.",
-      startProgress: 91,
+      year: "Conclusion: Precipitation & Wildfires and Climate Patterns",
+      text: `Precipitation & Wildfires:
+– Lower precipitation years tend to have increased wildfire activity due to drier vegetation.
+Climate Patterns:
+– Year-to-year precipitation variation shows California's vulnerability to drought cycles.
+  `,
+      startProgress: 80,
       endProgress: 1000,
     },
   ];
@@ -337,20 +341,23 @@ Imagine the extreme conditions and geographic influences that could drive such s
     <div class="row">
       <!-- Left column for facts -->
       <div class="col-md-4">
-
-
-        <div class="content" style="max-width: 120rem; min-width: 40rem; position: fixed; z-index: 999;">
-          <p class="question-text mt-custom" style="
+        <div
+          class="content"
+          style="max-width: 120rem; min-width: 40rem; position: fixed; z-index: 999;"
+        >
+          <p
+            class="question-text mt-custom"
+            style="
           font-size: {Math.max(48 - progress * 5, 15)}px; 
           padding: {Math.max(40 - progress * 4, 5)}px;
           min-height: {Math.max(200 - progress * 20, 50)}px;
-          ">{questionText}</p>
+          "
+          >
+            {questionText}
+          </p>
         </div>
 
-
-        {#if (activeSection == "GEOGRAPHICAL" && wildfireVisibleFacts.length > 0) ||
-             (activeSection == "SEASONAL" && seasonalVisibleFacts.length > 0) ||
-             (activeSection == "ENVIRONMENTAL" && visibleFacts.length > 0)}
+        {#if (activeSection == "GEOGRAPHICAL" && wildfireVisibleFacts.length > 0) || (activeSection == "SEASONAL" && seasonalVisibleFacts.length > 0) || (activeSection == "ENVIRONMENTAL" && visibleFacts.length > 0)}
           <div class="fixed-left-facts mt-custom" style="margin-top: 6rem;">
             {#if activeSection == "GEOGRAPHICAL"}
               {#each wildfireVisibleFacts as fact (fact.year)}
@@ -362,13 +369,15 @@ Imagine the extreme conditions and geographic influences that could drive such s
                   style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
                 >
                   <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
-                  <p style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;">
+                  <p
+                    style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+                  >
                     {fact.text}
                   </p>
                 </div>
               {/each}
             {/if}
-      
+
             {#if activeSection == "SEASONAL"}
               {#each seasonalVisibleFacts as fact (fact.year)}
                 {@const scale = getFactScale(fact)}
@@ -379,13 +388,15 @@ Imagine the extreme conditions and geographic influences that could drive such s
                   style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
                 >
                   <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
-                  <p style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;">
+                  <p
+                    style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+                  >
                     {fact.text}
                   </p>
                 </div>
               {/each}
             {/if}
-      
+
             {#if activeSection == "ENVIRONMENTAL"}
               {#each visibleFacts as fact (fact.year)}
                 {@const scale = getFactScale(fact)}
@@ -396,7 +407,9 @@ Imagine the extreme conditions and geographic influences that could drive such s
                   style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
                 >
                   <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
-                  <p style="font-size: calc({scale.fontSize} * 0.7);">
+                  <p
+                    style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+                  >
                     {fact.text}
                   </p>
                 </div>
@@ -405,9 +418,6 @@ Imagine the extreme conditions and geographic influences that could drive such s
           </div>
         {/if}
       </div>
-      
-
-        
 
       <!-- Right column for question and visualizations -->
       <div class={questionContainerClass} style="transition: all 0.8s ease;">
@@ -436,10 +446,10 @@ Imagine the extreme conditions and geographic influences that could drive such s
       <div class="col-md-8">
         {#if showVisualizations}
           <div
-            class="fixed-right-visualizations"
+            class="fixed-right-visualizations d-flex flex-row"
             in:fly={{ y: 200, duration: 800, delay: 300 }}
           >
-            <div class="viz-container mb-4 mt-4">
+            <div class="viz-container mb-4 mt-4 flex-fill me-3">
               {#if activeSection === "ENVIRONMENTAL"}
                 <FireDurationAndPrecip {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
@@ -457,7 +467,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
               <p class="small text-muted">Progress: {progress}</p>
             </div>
 
-            <div class="viz-container">
+            <div class="viz-container mb-4 mt-4 flex-fill ms-3">
               {#if activeSection === "ENVIRONMENTAL"}
                 <ParallelCoordsWithDualCharts {progress} />
               {:else if activeSection === "GEOGRAPHICAL"}
@@ -483,8 +493,6 @@ Imagine the extreme conditions and geographic influences that could drive such s
   </div>
 </main>
 
-
-
 <!-- Permanent Earth Button -->
 <div class="fixed-earth-button">
   <a href="{base}/immersive">
@@ -492,7 +500,6 @@ Imagine the extreme conditions and geographic influences that could drive such s
     <p>Immersive (3D) mode</p>
   </a>
 </div>
-
 
 <style>
   :global(body),
@@ -580,13 +587,13 @@ Imagine the extreme conditions and geographic influences that could drive such s
     position: fixed;
     top: 140px; /* Adjust based on header height */
     left: 20px;
-    width: calc(50% - 30px); /* Half of screen minus some padding */
+    width: calc(33% - 60px); /* Half of screen minus some padding */
     display: flex;
     flex-direction: column;
     gap: 20px;
     z-index: 100;
     max-height: calc(100vh - 160px); /* Calculate height to fit screen */
-    overflow-y: auto; /* Allow scrolling if facts are tall */
+    overflow-y: none; /* Allow scrolling if facts are tall */
   }
 
   .fact-box {
@@ -615,7 +622,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
     position: fixed;
     top: 140px; /* Adjust based on header height */
     right: 20px;
-    width: calc(50% - 30px); /* Half of screen minus some padding */
+    width: calc(66% - 30px); /* Half of screen minus some padding */
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -700,28 +707,27 @@ Imagine the extreme conditions and geographic influences that could drive such s
     }
   }
   .fixed-earth-button {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  z-index: 999;
-  text-align: center;
-}
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 999;
+    text-align: center;
+  }
 
-.fixed-earth-button img {
-  height: 5rem;
-  width: 5rem;
-  transition: transform 0.3s ease;
-}
+  .fixed-earth-button img {
+    height: 5rem;
+    width: 5rem;
+    transition: transform 0.3s ease;
+  }
 
-.fixed-earth-button img:hover {
-  transform: scale(1.1);
-}
+  .fixed-earth-button img:hover {
+    transform: scale(1.1);
+  }
 
-.fixed-earth-button p {
-  color: #3e2c28;
-  font-weight: bold;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-}
-
+  .fixed-earth-button p {
+    color: #3e2c28;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
 </style>
