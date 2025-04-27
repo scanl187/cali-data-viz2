@@ -443,54 +443,62 @@ Climate Patterns:
       </div>
 
       <!-- Visualization section that appears at progress >= 10 -->
-      <div class="col-md-8">
-        {#if showVisualizations}
-          <div
-            class="fixed-right-visualizations d-flex flex-row"
-            in:fly={{ y: 200, duration: 800, delay: 300 }}
-          >
-            <div class="viz-container mb-4 mt-4 flex-fill me-3">
-              {#if activeSection === "ENVIRONMENTAL"}
-                <FireDurationAndPrecip {progress} />
-              {:else if activeSection === "GEOGRAPHICAL"}
-                <HexbinMap
-                  csvPath="./fire_points_updated.csv"
-                  geojsonPath="./california-counties.geojson"
-                  {progress}
-                />
-              {:else if activeSection === "SEASONAL"}
-                <Seasons
-                  csvPath="./fire_climate_data.csv"
-                  currentProgress={progress}
-                />
-              {/if}
-              <p class="small text-muted">Progress: {progress}</p>
-            </div>
+      <!-- Visualization section that appears at progress >= 10 -->
+<div class="col-md-8">
+  {#if showVisualizations}
+    {#if activeSection === "SEASONAL"}
+      <div class="fixed-right-visualizations" in:fly={{ y: 200, duration: 800, delay: 300 }}>
+        <div class="viz-container ">
+          <Seasons
+            csvPath="./fire_climate_data.csv"
+            currentProgress={progress}
+          />
+          <p class="small text-muted">Progress: {progress}</p>
+        </div>
 
-            <div class="viz-container mb-4 mt-4 flex-fill ms-3">
-              {#if activeSection === "ENVIRONMENTAL"}
-                <ParallelCoordsWithDualCharts {progress} />
-              {:else if activeSection === "GEOGRAPHICAL"}
-                <CountyHeatmap
-                  csvPath="./fire_points_updated.csv"
-                  initialStartYear={1992}
-                  initialEndYear={2020}
-                  initialTopN={5}
-                  {progress}
-                />
-              {:else if activeSection === "SEASONAL"}
-                <SeasonsOld
-                  csvPath="./fire_climate_data.csv"
-                  currentProgress={progress}
-                />
-              {/if}
-              <p class="small text-muted">Progress: {progress}</p>
-            </div>
-          </div>
-        {/if}
+        <div class="viz-container ">
+          <SeasonsOld
+            csvPath="./fire_climate_data.csv"
+            currentProgress={progress}
+          />
+          <p class="small text-muted">Progress: {progress}</p>
+        </div>
       </div>
-    </div>
-  </div>
+    {:else}
+      <div class="fixed-right-visualizations d-flex flex-row" in:fly={{ y: 200, duration: 800, delay: 300 }}>
+        <div class="viz-container mb-4 mt-4 flex-fill me-3">
+          {#if activeSection === "ENVIRONMENTAL"}
+            <FireDurationAndPrecip {progress} />
+          {:else if activeSection === "GEOGRAPHICAL"}
+            <HexbinMap
+              csvPath="./fire_points_updated.csv"
+              geojsonPath="./california-counties.geojson"
+              {progress}
+            />
+          {/if}
+          <p class="small text-muted">Progress: {progress}</p>
+        </div>
+
+        <div class="viz-container mb-4 mt-4 flex-fill ms-3">
+          {#if activeSection === "ENVIRONMENTAL"}
+            <ParallelCoordsWithDualCharts {progress} />
+          {:else if activeSection === "GEOGRAPHICAL"}
+            <CountyHeatmap
+              csvPath="./fire_points_updated.csv"
+              initialStartYear={1992}
+              initialEndYear={2020}
+              initialTopN={5}
+              {progress}
+            />
+          {/if}
+          <p class="small text-muted">Progress: {progress}</p>
+        </div>
+      </div>
+    {/if}
+  {/if}
+</div>
+
+
 </main>
 
 <!-- Permanent Earth Button -->
