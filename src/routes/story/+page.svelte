@@ -337,80 +337,66 @@ Imagine the extreme conditions and geographic influences that could drive such s
     <div class="row">
       <!-- Left column for facts -->
       <div class="col-md-6">
-        {#if activeSection == "GEOGRAPHICAL"}
+        {#if (activeSection == "GEOGRAPHICAL" && wildfireVisibleFacts.length > 0) ||
+             (activeSection == "SEASONAL" && seasonalVisibleFacts.length > 0) ||
+             (activeSection == "ENVIRONMENTAL" && visibleFacts.length > 0)}
           <div class="fixed-left-facts mt-custom">
-            {#each wildfireVisibleFacts as fact (fact.year)}
-              {@const scale = getFactScale(fact)}
-              <div
-                class="fact-box"
-                in:fly={{ y: 50, duration: 600 }}
-                out:fade={{ duration: 300 }}
-                style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
-              >
-                <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
-                <p
-                  style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+            {#if activeSection == "GEOGRAPHICAL"}
+              {#each wildfireVisibleFacts as fact (fact.year)}
+                {@const scale = getFactScale(fact)}
+                <div
+                  class="fact-box"
+                  in:fly={{ y: 50, duration: 600 }}
+                  out:fade={{ duration: 300 }}
+                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
                 >
-                  {fact.text}
-                </p>
-              </div>
-            {/each}
-          </div>
-        {/if}
-
-        {#if activeSection == "SEASONAL"}
-          <div class="fixed-left-facts mt-custom">
-            {#each seasonalVisibleFacts as fact (fact.year)}
-              {@const scale = getFactScale(fact)}
-              <div
-                class="fact-box"
-                in:fly={{ y: 50, duration: 600 }}
-                out:fade={{ duration: 300 }}
-                style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
-              >
-                <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
-                <p
-                  style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+                  <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
+                  <p style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;">
+                    {fact.text}
+                  </p>
+                </div>
+              {/each}
+            {/if}
+      
+            {#if activeSection == "SEASONAL"}
+              {#each seasonalVisibleFacts as fact (fact.year)}
+                {@const scale = getFactScale(fact)}
+                <div
+                  class="fact-box"
+                  in:fly={{ y: 50, duration: 600 }}
+                  out:fade={{ duration: 300 }}
+                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
                 >
-                  {fact.text}
-                </p>
-              </div>
-            {/each}
+                  <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
+                  <p style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;">
+                    {fact.text}
+                  </p>
+                </div>
+              {/each}
+            {/if}
+      
+            {#if activeSection == "ENVIRONMENTAL"}
+              {#each visibleFacts as fact (fact.year)}
+                {@const scale = getFactScale(fact)}
+                <div
+                  class="fact-box"
+                  in:fly={{ y: 50, duration: 600 }}
+                  out:fade={{ duration: 300 }}
+                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
+                >
+                  <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
+                  <p style="font-size: calc({scale.fontSize} * 0.7);">
+                    {fact.text}
+                  </p>
+                </div>
+              {/each}
+            {/if}
           </div>
-        {/if}
-
-        {#if activeSection == "ENVIRONMENTAL"}
-          <div class="fixed-left-facts mt-custom">
-            {#each visibleFacts as fact (fact.year)}
-              {@const scale = getFactScale(fact)}
-              <div
-                class="fact-box"
-                in:fly={{ y: 50, duration: 600 }}
-                out:fade={{ duration: 300 }}
-                style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
-              >
-                <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
-                <p style="font-size: calc({scale.fontSize} * 0.7);">
-                  {fact.text}
-                </p>
-              </div>
-            {/each}
-          </div>
-        {/if}
-
-        {#if activeSection == "GEOGRAPHICAL"}
-          {#if progress>=95}
-          <div class="fixed-left-facts mt-custom">
-            <div class="d-flex justify-content-start align-items-center">
-              <a href="{base}/immersive">
-                <img src="./earth.gif" alt="earthpic" style="height: 5rem; width: 5rem; margin-top:10rem; transition: all 2s ease-in-out;" />
-              </a>
-              <p style="margin-top:11rem; margin-left:2rem; transition: all 2s ease-in-out;">Try our immersive mode!</p>
-            </div>
-          </div>
-          {/if}
         {/if}
       </div>
+      
+
+        
 
       <!-- Right column for question and visualizations -->
       <div class={questionContainerClass} style="transition: all 0.8s ease;">
@@ -485,6 +471,17 @@ Imagine the extreme conditions and geographic influences that could drive such s
     </div>
   </div>
 </main>
+
+
+
+<!-- Permanent Earth Button -->
+<div class="fixed-earth-button">
+  <a href="{base}/immersive">
+    <img src="./earth.gif" alt="earthpic" />
+    <p>Try our immersive mode!</p>
+  </a>
+</div>
+
 
 <style>
   :global(body),
@@ -691,4 +688,29 @@ Imagine the extreme conditions and geographic influences that could drive such s
       transform: translateY(0) translateX(-50%);
     }
   }
+  .fixed-earth-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 999;
+  text-align: center;
+}
+
+.fixed-earth-button img {
+  height: 5rem;
+  width: 5rem;
+  transition: transform 0.3s ease;
+}
+
+.fixed-earth-button img:hover {
+  transform: scale(1.1);
+}
+
+.fixed-earth-button p {
+  color: #3e2c28;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
 </style>
