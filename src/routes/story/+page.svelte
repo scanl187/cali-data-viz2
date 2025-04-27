@@ -32,7 +32,7 @@
 
   // Process text into array of characters
   let questionText = $derived(getQuestionText());
-  let showQuestion = $derived(progress > 1 && progress < 10);
+  let showQuestion = $derived(progress > 0 && progress < 10);
   let showFacts = $derived(progress >= 12 && progress <= 100);
   let showVisualizations = $derived(progress >= 10);
 
@@ -237,7 +237,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
   <div class="container-fluid">
     <div class="menu-bar">
       <h1>GOLDEN STATE OF FIRE</h1>
-      <!-- <p>{progress}</p> -->
+      <p>{progress}</p>
       <div class="team-icon" onclick={() => (showTeam = !showTeam)}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -336,11 +336,22 @@ Imagine the extreme conditions and geographic influences that could drive such s
   <div class="container-fluid">
     <div class="row">
       <!-- Left column for facts -->
-      <div class="col-md-6">
+      <div class="col-md-4">
+
+
+        <div class="content" style="max-width: 120rem; min-width: 40rem; position: fixed; z-index: 999;">
+          <p class="question-text mt-custom" style="
+          font-size: {Math.max(48 - progress * 5, 15)}px; 
+          padding: {Math.max(40 - progress * 4, 5)}px;
+          min-height: {Math.max(200 - progress * 20, 50)}px;
+          ">{questionText}</p>
+        </div>
+
+
         {#if (activeSection == "GEOGRAPHICAL" && wildfireVisibleFacts.length > 0) ||
              (activeSection == "SEASONAL" && seasonalVisibleFacts.length > 0) ||
              (activeSection == "ENVIRONMENTAL" && visibleFacts.length > 0)}
-          <div class="fixed-left-facts mt-custom">
+          <div class="fixed-left-facts mt-custom" style="margin-top: 6rem;">
             {#if activeSection == "GEOGRAPHICAL"}
               {#each wildfireVisibleFacts as fact (fact.year)}
                 {@const scale = getFactScale(fact)}
@@ -404,7 +415,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
           <div id="virtual"></div>
           <div></div>
           <div slot="viz" class="viz-content mt-custom">
-            <div class="content mt-5">
+            <!-- <div class="content mt-5">
               {#if showQuestion}
                 <p
                   class="question-text mt-5"
@@ -416,17 +427,17 @@ Imagine the extreme conditions and geographic influences that could drive such s
                   {questionText}
                 </p>
               {/if}
-            </div>
+            </div> -->
           </div>
         </Scroll>
       </div>
 
       <!-- Visualization section that appears at progress >= 10 -->
-      <div class="col-md-6">
+      <div class="col-md-8">
         {#if showVisualizations}
           <div
             class="fixed-right-visualizations"
-            in:fly={{ x: 200, duration: 800, delay: 300 }}
+            in:fly={{ y: 200, duration: 800, delay: 300 }}
           >
             <div class="viz-container mb-4 mt-4">
               {#if activeSection === "ENVIRONMENTAL"}
@@ -478,7 +489,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
 <div class="fixed-earth-button">
   <a href="{base}/immersive">
     <img src="./earth.gif" alt="earthpic" />
-    <p>Try our immersive mode!</p>
+    <p>Immersive (3D) mode</p>
   </a>
 </div>
 
@@ -555,7 +566,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
 
   /* Virtual height for scrolling */
   #virtual {
-    height: 300vh;
+    height: 900vh;
     background-color: #fef9f6;
   }
 
