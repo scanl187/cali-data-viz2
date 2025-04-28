@@ -65,86 +65,95 @@
     draw(topCounties, selectedYears);
   }
 
-  function draw(countyOrder, yYears) {
-    d3.select(container).selectAll('*').remove();
+  function getReadableTextColor(backgroundColor) {
+  const rgb = d3.color(backgroundColor);
+  if (!rgb) return "#000"; // fallback
+  const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+  return brightness > 128 ? "#000" : "#fff";
+}
 
-    const margin = { top: 80, right: 20, bottom: 40, left: 80 };
-    const width = margin.left + margin.right + cellWidth * countyOrder.length;
-    const height = margin.top + margin.bottom + cellHeight * yYears.length;
+function draw(countyOrder, yYears) {
+  d3.select(container).selectAll('*').remove();
 
-    const svg = d3.select(container)
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height);
+  const margin = { top: 80, right: 20, bottom: 40, left: 80 };
+  const width = margin.left + margin.right + cellWidth * countyOrder.length;
+  const height = margin.top + margin.bottom + cellHeight * yYears.length;
 
-    const g = svg.append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+  const svg = d3.select(container)
+    .append('svg')
+    .attr('width', width)
+    .attr('height', height);
 
-    const x = d3.scaleBand()
-      .domain(countyOrder)
-      .range([0, cellWidth * countyOrder.length])
-      .padding(0.1);
+  const g = svg.append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const y = d3.scaleBand()
-      .domain(yYears)
-      .range([0, cellHeight * yYears.length]);
+  const x = d3.scaleBand()
+    .domain(countyOrder)
+    .range([0, cellWidth * countyOrder.length])
+    .padding(0.1);
 
-    const maxCount = d3.max(heatmapData, d => d.fire_count);
-    const colorScale = d3.scaleSequential()
-      .domain([0, maxCount])
-      .interpolator(d3.interpolateReds);
+  const y = d3.scaleBand()
+    .domain(yYears)
+    .range([0, cellHeight * yYears.length]);
 
-    g.selectAll("rect")
-      .data(heatmapData)
-      .enter()
-      .append("rect")
-      .attr("x", d => x(d.county))
-      .attr("y", d => y(d.year))
-      .attr("width", cellWidth)
-      .attr("height", cellHeight)
-      .style("fill", d => colorScale(d.fire_count))
-      .style("stroke", "#fff");
+  const maxCount = d3.max(heatmapData, d => d.fire_count);
+  const colorScale = d3.scaleSequential()
+    .domain([0, maxCount])
+    .interpolator(d3.interpolateReds);
 
-    g.selectAll("text.cell")
-      .data(heatmapData)
-      .enter()
-      .append("text")
-      .attr("class", "cell")
-      .attr("x", d => x(d.county) + cellWidth / 2)
-      .attr("y", d => y(d.year) + cellHeight / 2)
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle")
-      .attr("font-size", "12px")
-      .text(d => d.fire_count > 0 ? Math.round(d.fire_count) : '');
+  g.selectAll("rect")
+    .data(heatmapData)
+    .enter()
+    .append("rect")
+    .attr("x", d => x(d.county))
+    .attr("y", d => y(d.year))
+    .attr("width", cellWidth)
+    .attr("height", cellHeight)
+    .style("fill", d => colorScale(d.fire_count))
+    .style("stroke", "#fff");
 
-    svg.append("g")
-      .attr("transform", `translate(${margin.left},${margin.top - 10})`)
-      .selectAll("text")
-      .data(countyOrder)
-      .enter()
-      .append("text")
-      .attr("x", d => x(d) + cellWidth / 2)
-      .attr("y", 0)
-      .attr("text-anchor", "start")
-      .attr("transform", d => `rotate(-45, ${x(d) + cellWidth / 2}, 0)`)
-      .attr("font-weight", "bold")
-      .attr("font-size", "12px")
-      .text(d => d);
+  g.selectAll("text.cell")
+    .data(heatmapData)
+    .enter()
+    .append("text")
+    .attr("class", "cell")
+    .attr("x", d => x(d.county) + cellWidth / 2)
+    .attr("y", d => y(d.year) + cellHeight / 2)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .attr("font-size", "12px")
+    .attr("fill", d => getReadableTextColor(colorScale(d.fire_count)))
+    .text(d => d.fire_count > 0 ? Math.round(d.fire_count) : '');
 
-    svg.append("g")
-      .attr("transform", `translate(${margin.left - 10},${margin.top})`)
-      .selectAll("text")
-      .data(yYears)
-      .enter()
-      .append("text")
-      .attr("x", -5)
-      .attr("y", d => y(d) + cellHeight / 2)
-      .attr("text-anchor", "end")
-      .attr("dominant-baseline", "middle")
-      .attr("font-weight", "bold")
-      .attr("font-size", "12px")
-      .text(d => d);
-  }
+  svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top - 10})`)
+    .selectAll("text")
+    .data(countyOrder)
+    .enter()
+    .append("text")
+    .attr("x", d => x(d) + cellWidth / 2)
+    .attr("y", 0)
+    .attr("text-anchor", "start")
+    .attr("transform", d => `rotate(-45, ${x(d) + cellWidth / 2}, 0)`)
+    .attr("font-weight", "bold")
+    .attr("font-size", "12px")
+    .text(d => d);
+
+  svg.append("g")
+    .attr("transform", `translate(${margin.left - 10},${margin.top})`)
+    .selectAll("text")
+    .data(yYears)
+    .enter()
+    .append("text")
+    .attr("x", -5)
+    .attr("y", d => y(d) + cellHeight / 2)
+    .attr("text-anchor", "end")
+    .attr("dominant-baseline", "middle")
+    .attr("font-weight", "bold")
+    .attr("font-size", "12px")
+    .text(d => d);
+}
+
 </script>
 
 <!-- Toggle UI -->
