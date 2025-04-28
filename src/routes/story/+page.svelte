@@ -509,7 +509,8 @@ Climate Patterns:
 <div class="col-md-8">
   {#if showVisualizations}
     {#if activeSection === "SEASONAL"}
-      <div class="fixed-right-visualizations" in:fly={{ y: 200, duration: 800, delay: 300 }}>
+      <div class="fixed-right-visualizations mt-custom" in:fly={{ y: 200, duration: 800, delay: 300 }}>
+
         <div class="viz-container ">
           <Seasons
             csvPath="./fire_climate_data.csv"
