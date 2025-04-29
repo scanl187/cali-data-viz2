@@ -16,8 +16,6 @@
   // ACTIVE SECTION STATE
   let activeSection = $state("GEOGRAPHICAL");
 
-=======
->>>>>>> dev
   let showTeam = $state(false);
   let screenWidth = $state(0);
 
@@ -284,14 +282,10 @@ Climate Patterns:
   onMount(() => {
     // Get initial screen width
     screenWidth = window.innerWidth;
-    vizContainerHeight = window.innerHeight * 0.72 + "px";
-
 
     // Update on resize
     const handleResize = () => {
       screenWidth = window.innerWidth;
-      vizContainerHeight = window.innerHeight * 0.72 + "px";
-
     };
 
     window.addEventListener("resize", handleResize);
@@ -516,7 +510,7 @@ Climate Patterns:
         {#if showVisualizations}
           {#if activeSection === "SEASONAL"}
             <div
-              class="fixed-right-visualizations mt-custom-2"
+              class="fixed-right-visualizations mt-custom"
               in:fly={{ y: 200, duration: 800, delay: 300 }}
             >
               <div class="viz-container">
@@ -763,10 +757,6 @@ Climate Patterns:
   .mt-custom {
     margin-top: 4rem;
   }
-  .mt-custom-2 {
-  margin-top: 2rem; /* Or whatever smaller margin you prefer */
-  }
-
 
   .question-text {
     transition: all 0.5s ease-in-out;
