@@ -286,9 +286,9 @@
 
 .year-label {
   position: absolute;
-  top: 5px;
-  right: 30px;
-  font-size: 32px;
+  top: -15px;
+  right: -15px;
+  font-size: 24px;
   font-weight: 900;
   color: #3e2c28;
   background: rgba(255, 255, 255, 0.85);
