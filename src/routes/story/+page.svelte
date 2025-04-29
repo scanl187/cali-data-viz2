@@ -509,7 +509,7 @@ Climate Patterns:
 <div class="col-md-8">
   {#if showVisualizations}
     {#if activeSection === "SEASONAL"}
-      <div class="fixed-right-visualizations mt-custom" in:fly={{ y: 200, duration: 800, delay: 300 }}>
+      <div class="fixed-right-visualizations mt-custom-2" in:fly={{ y: 200, duration: 800, delay: 300 }}>
 
         <div class="viz-container ">
           <Seasons
@@ -749,6 +749,10 @@ Climate Patterns:
   .mt-custom {
     margin-top: 4rem;
   }
+  .mt-custom-2 {
+  margin-top: 2rem; /* Or whatever smaller margin you prefer */
+  }
+
 
   .question-text {
     transition: all 0.5s ease-in-out;
