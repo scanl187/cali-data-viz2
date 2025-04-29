@@ -137,7 +137,7 @@
       year: "Conclusion - Seasonal Fire Regime Shifts",
       text: "California’s wildfire seasons have evolved drastically, reflecting fuel build-up, climate shifts, and altered precipitation patterns.",
       startProgress: 91,
-      endProgress: 100,
+      endProgress: 1000,
     },
   ];
 
