@@ -516,7 +516,7 @@ Climate Patterns:
             csvPath="./fire_climate_data.csv"
             currentProgress={progress}
           />
-          <p class="small text-muted">Progress: {progress}</p>
+          <!-- <p class="small text-muted">Progress: {progress}</p> -->
         </div>
 
         <div class="viz-container ">
@@ -524,12 +524,12 @@ Climate Patterns:
             csvPath="./fire_climate_data.csv"
             currentProgress={progress}
           />
-          <p class="small text-muted">Progress: {progress}</p>
+          <!-- <p class="small text-muted">Progress: {progress}</p> -->
         </div>
       </div>
     {:else}
       <div class="fixed-right-visualizations d-flex flex-row" in:fly={{ y: 200, duration: 800, delay: 300 }}>
-        <div class="viz-container mb-4 mt-4 flex-fill me-3">
+        <div class="viz-container mt-4 flex-fill me-3">
           {#if activeSection === "ENVIRONMENTAL"}
             <FireDurationAndPrecip {progress} />
           {:else if activeSection === "GEOGRAPHICAL"}
@@ -539,7 +539,7 @@ Climate Patterns:
               {progress}
             />
           {/if}
-          <p class="small text-muted">Progress: {progress}</p>
+          <!-- <p class="small text-muted">Progress 1: {progress}</p> -->
         </div>
 
         <div class="viz-container mb-4 mt-4 flex-fill ms-3">
@@ -554,7 +554,7 @@ Climate Patterns:
               {progress}
             />
           {/if}
-          <p class="small text-muted">Progress: {progress}</p>
+          <!-- <p class="small text-muted">Progress 2: {progress}</p> -->
         </div>
       </div>
     {/if}
@@ -696,9 +696,10 @@ Climate Patterns:
     width: calc(66% - 30px); /* Half of screen minus some padding */
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    /* gap: 20px; */
     z-index: 100;
-    max-height: calc(100vh - 160px); /* Calculate height to fit screen */
+    max-height: calc(100vh - 160px);
+    height: 45rem;
     overflow-y: auto; /* Allow scrolling if visualizations are tall */
   }
 
@@ -719,6 +720,7 @@ Climate Patterns:
     color: #3e2c28;
     padding: 1rem;
     width: 100%;
+    height: 35rem;
   }
 
   /* Content area */
