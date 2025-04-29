@@ -10,6 +10,7 @@
   import HexbinMap from "$lib/HexbinMap.svelte";
   import { onMount } from "svelte";
   import { base } from "$app/paths";
+  import Introduction from "$lib/Introduction.svelte";
 
   let progress = $state(0);
 
@@ -296,107 +297,111 @@ Climate Patterns:
   });
 </script>
 
+<Introduction introHeight={200} />
+
 <!-- Fixed Header (outside of Scroll) -->
-<header class="fixed-top">
-  <div class="container-fluid">
-    <div class="menu-bar">
-      <h1>GOLDEN STATE OF FIRE</h1>
-      <p>{progress}</p>
-      <div class="team-icon" onclick={() => (showTeam = !showTeam)}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="#3e2c28"
-        >
-          <path
-            d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 
+{#if progress >= 5}
+  <header class="fixed-top" transition:slide={{ duration: 400 }}>
+    <div class="container-fluid">
+      <div class="menu-bar">
+        <h1>GOLDEN STATE OF FIRE</h1>
+        <p>{progress}</p>
+        <div class="team-icon" onclick={() => (showTeam = !showTeam)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="#3e2c28"
+          >
+            <path
+              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 
                2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 
                10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 2.02 1.97 
                3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
-          />
-        </svg>
+            />
+          </svg>
+        </div>
       </div>
-    </div>
 
-    <div class="horizontal-buttons">
-      <div class="row">
-        
-        <div class="col-4">
-          <button
-            class="btn w-100 {activeSection === 'GEOGRAPHICAL'
-              ? 'active-btn'
-              : ''}"
-            onclick={() => (activeSection = "GEOGRAPHICAL")}
-          >
-            GEOGRAPHICAL
-          </button>
+      <div class="horizontal-buttons">
+        <div class="row">
+          <div class="col-4">
+            <button
+              class="btn w-100 {activeSection === 'GEOGRAPHICAL'
+                ? 'active-btn'
+                : ''}"
+              onclick={() => (activeSection = "GEOGRAPHICAL")}
+            >
+              GEOGRAPHICAL
+            </button>
+          </div>
+          <div class="col-4">
+            <button
+              class="btn w-100 {activeSection === 'ENVIRONMENTAL'
+                ? 'active-btn'
+                : ''}"
+              onclick={() => (activeSection = "ENVIRONMENTAL")}
+            >
+              ENVIRONMENTAL
+            </button>
+          </div>
+          <div class="col-4">
+            <button
+              class="btn w-100 {activeSection === 'SEASONAL'
+                ? 'active-btn'
+                : ''}"
+              onclick={() => (activeSection = "SEASONAL")}
+            >
+              SEASONAL
+            </button>
+          </div>
         </div>
-        <div class="col-4">
-          <button
-            class="btn w-100 {activeSection === 'ENVIRONMENTAL'
-              ? 'active-btn'
-              : ''}"
-            onclick={() => (activeSection = "ENVIRONMENTAL")}
-          >
-            ENVIRONMENTAL
-          </button>
-        </div>
-        <div class="col-4">
-          <button
-            class="btn w-100 {activeSection === 'SEASONAL' ? 'active-btn' : ''}"
-            onclick={() => (activeSection = "SEASONAL")}
-          >
-            SEASONAL
-          </button>
-        </div>
-       
       </div>
-    </div>
 
-    {#if showTeam}
-      <div class="team-members">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>GitHub</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Dipan Bag</td>
-              <td>bag00003@umn.edu</td>
-              <td>dipan99</td>
-            </tr>
-            <tr>
-              <td>Aarav Kalkar</td>
-              <td>kalka046@umn.edu</td>
-              <td>aarav2703</td>
-            </tr>
-            <tr>
-              <td>Brandt Kringlie</td>
-              <td>kring089@umn.edu</td>
-              <td>bkringlie</td>
-            </tr>
-            <tr>
-              <td>Shane Lentsch</td>
-              <td>lents084@umn.edu</td>
-              <td>Shane-Lentsch</td>
-            </tr>
-            <tr>
-              <td>Marc Scanlan</td>
-              <td>scanl187@umn.edu</td>
-              <td>scanl187</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    {/if}
-  </div>
-</header>
+      {#if showTeam}
+        <div class="team-members">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>GitHub</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Dipan Bag</td>
+                <td>bag00003@umn.edu</td>
+                <td>dipan99</td>
+              </tr>
+              <tr>
+                <td>Aarav Kalkar</td>
+                <td>kalka046@umn.edu</td>
+                <td>aarav2703</td>
+              </tr>
+              <tr>
+                <td>Brandt Kringlie</td>
+                <td>kring089@umn.edu</td>
+                <td>bkringlie</td>
+              </tr>
+              <tr>
+                <td>Shane Lentsch</td>
+                <td>lents084@umn.edu</td>
+                <td>Shane-Lentsch</td>
+              </tr>
+              <tr>
+                <td>Marc Scanlan</td>
+                <td>scanl187@umn.edu</td>
+                <td>scanl187</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      {/if}
+    </div>
+  </header>
+{/if}
 
 <main class="pt-5 mt-5">
   <div class="container-fluid">
@@ -570,12 +575,14 @@ Climate Patterns:
 </main>
 
 <!-- Permanent Earth Button -->
-<div class="fixed-earth-button">
-  <a href="{base}/immersive">
-    <img src="./earth.gif" alt="earthpic" />
-    <p>Immersive (3D) mode</p>
-  </a>
-</div>
+{#if progress >= 5}
+  <div class="fixed-earth-button" transition:slide={{ duration: 400 }}>
+    <a href="{base}/immersive">
+      <img src="./earth.gif" alt="earthpic" />
+      <p>Immersive (3D) mode</p>
+    </a>
+  </div>
+{/if}
 
 <style>
   :global(body),
