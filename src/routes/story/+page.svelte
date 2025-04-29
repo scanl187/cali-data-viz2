@@ -516,7 +516,7 @@ Climate Patterns:
         {#if showVisualizations}
           {#if activeSection === "SEASONAL"}
             <div
-              class="fixed-right-visualizations mt-custom"
+              class="fixed-right-visualizations mt-custom-2"
               in:fly={{ y: 200, duration: 800, delay: 300 }}
             >
               <div class="viz-container" style="height: {vizContainerHeight}">
