@@ -505,9 +505,9 @@ Climate Patterns:
                   out:fade={{ duration: 300 }}
                   style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
                 >
-                  <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
+                  <h3 style="font-size: calc({scale.fontSize} * 0.85);">{fact.year}</h3>
                   <p
-                    style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+                    style="font-size: calc({scale.fontSize} * 0.4); white-space: pre-line;"
                   >
                     {fact.text}
                   </p>
@@ -523,7 +523,7 @@ Climate Patterns:
         <Scroll bind:progress>
           <div id="virtual"></div>
           <div></div>
-          <div slot="viz" class="viz-content mt-custom">
+          <div slot="viz" class="viz-content mt-custom" style="margin-top: 20vh;">
           </div>
         </Scroll>
       </div>
@@ -610,6 +610,7 @@ Climate Patterns:
     padding: 0;
     width: 100%;
     overflow-x: hidden;
+    background-color: #fef9f6;
   }
 
   /* Fixed header styling compatible with Bootstrap */
@@ -677,6 +678,7 @@ Climate Patterns:
   #virtual {
     height: 900vh;
     background-color: #fef9f6;
+    width: 33vw;
   }
 
   /* Question expanded state */
@@ -819,7 +821,7 @@ Climate Patterns:
   }
   .fixed-earth-button {
     position: fixed;
-    bottom: 20px;
+    bottom: 10px;
     left: 20px;
     z-index: 999;
     text-align: center;
