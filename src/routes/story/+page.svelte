@@ -505,9 +505,9 @@ Climate Patterns:
                   out:fade={{ duration: 300 }}
                   style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
                 >
-                  <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
+                  <h3 style="font-size: calc({scale.fontSize} * 0.85);">{fact.year}</h3>
                   <p
-                    style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+                    style="font-size: calc({scale.fontSize} * 0.4); white-space: pre-line;"
                   >
                     {fact.text}
                   </p>
@@ -815,7 +815,7 @@ Climate Patterns:
   }
   .fixed-earth-button {
     position: fixed;
-    bottom: 20px;
+    bottom: 10px;
     left: 20px;
     z-index: 999;
     text-align: center;
