@@ -403,14 +403,46 @@ Climate Patterns:
   </header>
 {/if}
 
+<!-- Fixed Question Text -->
+{#if progress > 0}
+  <div
+    class="content question-container"
+    style="
+      position: fixed;
+      z-index: 2000;
+      top: {progress < 10 ? '50%' : '150px'};
+      left: {progress < 10 ? '50%' : '0px'};
+      transform: translate({progress < 10 ? '-50%, -50%' : '0, 0'});
+      width: {progress < 10 ? 'auto' : '40%'};
+      max-width: {progress < 10 ? '90%' : '450px'};
+      transition: all 1s ease-out;
+    "
+  >
+    <p
+      class="question-text"
+      style="
+        font-size: {Math.max(48 - progress * 5, 15)}px; 
+        padding: {Math.max(40 - progress * 4, 5)}px;
+        min-height: {Math.max(200 - progress * 20, 50)}px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(204, 92, 60, 0.3);
+        margin-top: 0;
+        text-align: {progress < 10 ? 'center' : 'left'};
+      "
+    >
+      {questionText}
+    </p>
+  </div>
+{/if}
+
 <main class="pt-5 mt-5">
   <div class="container-fluid">
     <div class="row">
       <!-- Left column for facts -->
       <div class="col-md-4">
-        <div
+        <!-- <div
           class="content"
-          style="max-width: 120rem; min-width: 40rem; position: fixed; z-index: 999;"
+          style="max-width: 120rem; min-width: 40rem; position: fixed; z-index: 1000;"
         >
           <p
             class="question-text mt-custom"
@@ -422,7 +454,7 @@ Climate Patterns:
           >
             {questionText}
           </p>
-        </div>
+        </div> -->
 
         {#if (activeSection == "GEOGRAPHICAL" && wildfireVisibleFacts.length > 0) || (activeSection == "SEASONAL" && seasonalVisibleFacts.length > 0) || (activeSection == "ENVIRONMENTAL" && visibleFacts.length > 0)}
           <div class="fixed-left-facts mt-custom" style="margin-top: 6rem;">
@@ -492,19 +524,6 @@ Climate Patterns:
           <div id="virtual"></div>
           <div></div>
           <div slot="viz" class="viz-content mt-custom">
-            <!-- <div class="content mt-5">
-              {#if showQuestion}
-                <p
-                  class="question-text mt-5"
-                  style="font-size: {Math.max(48 - progress * 5, 12)}px; 
-                          padding: {Math.max(40 - progress * 4, 5)}px;
-                          min-height: {Math.max(200 - progress * 20, 50)}px;
-                          opacity: {Math.max(1 - progress * 0.1, 0.1)};"
-                >
-                  {questionText}
-                </p>
-              {/if}
-            </div> -->
           </div>
         </Scroll>
       </div>
@@ -539,7 +558,7 @@ Climate Patterns:
               class="fixed-right-visualizations d-flex flex-row"
               in:fly={{ y: 200, duration: 800, delay: 300 }}
             >
-              <div class="viz-container mt-4 flex-fill me-3">
+              <div class="viz-container mt-4 flex-fill me-2">
                 {#if activeSection === "ENVIRONMENTAL"}
                   <FireDurationAndPrecip {progress} />
                 {:else if activeSection === "GEOGRAPHICAL"}
@@ -552,7 +571,7 @@ Climate Patterns:
                 <!-- <p class="small text-muted">Progress 1: {progress}</p> -->
               </div>
 
-              <div class="viz-container mb-4 mt-4 flex-fill ms-3">
+              <div class="viz-container mt-4 flex-fill ms-2">
                 {#if activeSection === "ENVIRONMENTAL"}
                   <ParallelCoordsWithDualCharts {progress} />
                 {:else if activeSection === "GEOGRAPHICAL"}
@@ -765,19 +784,21 @@ Climate Patterns:
     margin-top: 4rem;
   }
 
+  .question-container {
+    pointer-events: none; /* Let clicks pass through */
+  }
+  
   .question-text {
+    pointer-events: auto; /* Make the text itself clickable */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.5s ease-in-out;
-    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 2rem;
     font-weight: 500;
     line-height: 1.4;
-    max-width: 90%;
     margin-left: auto;
     margin-right: auto;
   }
