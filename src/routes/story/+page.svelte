@@ -16,6 +16,13 @@
   // ACTIVE SECTION STATE
   let activeSection = $state("GEOGRAPHICAL");
 
+  let vizContainerHeight = window.innerHeight * 0.72 + "px";
+
+  function updateHeight() {
+    // height = window.innerHeight * 0.8;
+    vizContainerHeight = window.innerHeight * 0.72 + "px";
+  }
+
   let showTeam = $state(false);
   let screenWidth = $state(0);
 
@@ -45,101 +52,100 @@
     }
   });
   const seasonalFacts = [
-  // 15 - 35 (Early 1990s Baseline)
-  {
-    year: "1992–1995 - Moderate Winter Activity",
-    text: "Winter fire counts typically ranged between 100–400. (Example: 1992 — January 92, February 54, December 101.)",
-    startProgress: 15,
-    endProgress: 22,
-  },
-  {
-    year: "1992–1995 - Consistently High Summer Peaks",
-    text: "Summer months consistently peaked with high fire activity — June, July, and August each over 2,000 fires in 1992.",
-    startProgress: 23,
-    endProgress: 29,
-  },
-  {
-    year: "1992–1995 - Lower Overall Fire Totals",
-    text: "Overall annual totals, like ~7,381 fires in 1995, reflect a baseline of moderate activity and lower fuel accumulation.",
-    startProgress: 30,
-    endProgress: 35,
-  },
+    // 15 - 35 (Early 1990s Baseline)
+    {
+      year: "1992–1995 - Moderate Winter Activity",
+      text: "Winter fire counts typically ranged between 100–400. (Example: 1992 — January 92, February 54, December 101.)",
+      startProgress: 15,
+      endProgress: 22,
+    },
+    {
+      year: "1992–1995 - Consistently High Summer Peaks",
+      text: "Summer months consistently peaked with high fire activity — June, July, and August each over 2,000 fires in 1992.",
+      startProgress: 23,
+      endProgress: 29,
+    },
+    {
+      year: "1992–1995 - Lower Overall Fire Totals",
+      text: "Overall annual totals, like ~7,381 fires in 1995, reflect a baseline of moderate activity and lower fuel accumulation.",
+      startProgress: 30,
+      endProgress: 35,
+    },
 
-  // 36 - 55 (Mid 2000s - Emerging Extremes)
-  {
-    year: "2006 - Record Summer Outlier",
-    text: "July 2006 experienced 2,933 fires — a record-setting month, driven by extreme fuel-drying conditions.",
-    startProgress: 36,
-    endProgress: 41,
-  },
-  {
-    year: "2006 - Winter Fire Counts Rise",
-    text: "Winter fire counts started increasing (e.g., January 240, December 400), indicating shifting seasonal patterns.",
-    startProgress: 42,
-    endProgress: 47,
-  },
-  {
-    year: "2006 - Fuel Build-Up Notice",
-    text: "Decades of wildfire suppression led to denser, highly combustible vegetation and shrubs by the mid-2000s.",
-    startProgress: 48,
-    endProgress: 55,
-  },
+    // 36 - 55 (Mid 2000s - Emerging Extremes)
+    {
+      year: "2006 - Record Summer Outlier",
+      text: "July 2006 experienced 2,933 fires — a record-setting month, driven by extreme fuel-drying conditions.",
+      startProgress: 36,
+      endProgress: 41,
+    },
+    {
+      year: "2006 - Winter Fire Counts Rise",
+      text: "Winter fire counts started increasing (e.g., January 240, December 400), indicating shifting seasonal patterns.",
+      startProgress: 42,
+      endProgress: 47,
+    },
+    {
+      year: "2006 - Fuel Build-Up Notice",
+      text: "Decades of wildfire suppression led to denser, highly combustible vegetation and shrubs by the mid-2000s.",
+      startProgress: 48,
+      endProgress: 55,
+    },
 
-  // 56 - 75 (Late 2000s - Extreme Activity 2007)
-  {
-    year: "2007 - Sharp Rise in Fire Events",
-    text: "Total estimated fires reached ~13,428 in 2007 — nearly doubling historical averages.",
-    startProgress: 56,
-    endProgress: 61,
-  },
-  {
-    year: "2007 - Atypical Winter Anomalies",
-    text: "Winter fires skyrocketed in January 2007 alone, exceeding 1,400 fires — far above normal winter activity.",
-    startProgress: 62,
-    endProgress: 68,
-  },
-  {
-    year: "2007 - Sustained Extreme Summers",
-    text: "Summer months like July (2,283 fires) and August (1,819 fires) continued the extreme fire trends.",
-    startProgress: 69,
-    endProgress: 75,
-  },
+    // 56 - 75 (Late 2000s - Extreme Activity 2007)
+    {
+      year: "2007 - Sharp Rise in Fire Events",
+      text: "Total estimated fires reached ~13,428 in 2007 — nearly doubling historical averages.",
+      startProgress: 56,
+      endProgress: 61,
+    },
+    {
+      year: "2007 - Atypical Winter Anomalies",
+      text: "Winter fires skyrocketed in January 2007 alone, exceeding 1,400 fires — far above normal winter activity.",
+      startProgress: 62,
+      endProgress: 68,
+    },
+    {
+      year: "2007 - Sustained Extreme Summers",
+      text: "Summer months like July (2,283 fires) and August (1,819 fires) continued the extreme fire trends.",
+      startProgress: 69,
+      endProgress: 75,
+    },
 
-  // 76 - 90 (Drivers Behind Seasonal Changes)
-  {
-    year: "Driver - Fuel Accumulation Over Decades",
-    text: "Historical fire suppression allowed fine fuels to build up significantly, enhancing fire potential.",
-    startProgress: 76,
-    endProgress: 79,
-  },
-  {
-    year: "Driver - Climate Change Extremes",
-    text: "Higher temperatures, extended droughts (2007–09), and lower humidity contributed to more fire weather days.",
-    startProgress: 80,
-    endProgress: 83,
-  },
-  {
-    year: "Driver - Shifts in Precipitation Patterns",
-    text: "Reduced and delayed winter rainfall left vegetation drier for longer periods, encouraging winter fires.",
-    startProgress: 84,
-    endProgress: 87,
-  },
-  {
-    year: "Driver - Lightning Activity Increases",
-    text: "Warmer, stormier conditions boosted convective lightning — increasing ignition sources, especially under 'hot-wet' setups.",
-    startProgress: 88,
-    endProgress: 90,
-  },
+    // 76 - 90 (Drivers Behind Seasonal Changes)
+    {
+      year: "Driver - Fuel Accumulation Over Decades",
+      text: "Historical fire suppression allowed fine fuels to build up significantly, enhancing fire potential.",
+      startProgress: 76,
+      endProgress: 79,
+    },
+    {
+      year: "Driver - Climate Change Extremes",
+      text: "Higher temperatures, extended droughts (2007–09), and lower humidity contributed to more fire weather days.",
+      startProgress: 80,
+      endProgress: 83,
+    },
+    {
+      year: "Driver - Shifts in Precipitation Patterns",
+      text: "Reduced and delayed winter rainfall left vegetation drier for longer periods, encouraging winter fires.",
+      startProgress: 84,
+      endProgress: 87,
+    },
+    {
+      year: "Driver - Lightning Activity Increases",
+      text: "Warmer, stormier conditions boosted convective lightning — increasing ignition sources, especially under 'hot-wet' setups.",
+      startProgress: 88,
+      endProgress: 90,
+    },
 
-  // 91 - 100 (Conclusion)
-  {
-    year: "Conclusion - Seasonal Fire Regime Shifts",
-    text: "California’s wildfire seasons have evolved drastically, reflecting fuel build-up, climate shifts, and altered precipitation patterns.",
-    startProgress: 91,
-    endProgress: 100,
-  },
-];
-
+    // 91 - 100 (Conclusion)
+    {
+      year: "Conclusion - Seasonal Fire Regime Shifts",
+      text: "California’s wildfire seasons have evolved drastically, reflecting fuel build-up, climate shifts, and altered precipitation patterns.",
+      startProgress: 91,
+      endProgress: 100,
+    },
+  ];
 
   let seasonalVisibleFacts = $derived(
     seasonalFacts.filter(
@@ -147,79 +153,78 @@
     ),
   );
   const wildfireFacts = [
-  // 15 - 30 (Early 1990s - Baseline)
-  {
-    year: "1992–1995 - Baseline Wildfire Distribution",
-    text: "Fires were moderately distributed across most California counties, with no extreme concentration areas.",
-    startProgress: 15,
-    endProgress: 20,
-  },
-  {
-    year: "1992–1995 - Low Burned Acreage",
-    text: "Burned acreage remained relatively low statewide, due to milder weather and minimal fuel accumulation.",
-    startProgress: 21,
-    endProgress: 30,
-  },
+    // 15 - 30 (Early 1990s - Baseline)
+    {
+      year: "1992–1995 - Baseline Wildfire Distribution",
+      text: "Fires were moderately distributed across most California counties, with no extreme concentration areas.",
+      startProgress: 15,
+      endProgress: 20,
+    },
+    {
+      year: "1992–1995 - Low Burned Acreage",
+      text: "Burned acreage remained relatively low statewide, due to milder weather and minimal fuel accumulation.",
+      startProgress: 21,
+      endProgress: 30,
+    },
 
-  // 31 - 50 (Mid 2000s - Hotspots Emerging)
-  {
-    year: "Mid-2000s - Rising Hotspots",
-    text: "Certain counties, especially Riverside in Southern California, started to show a noticeable rise in wildfire counts.",
-    startProgress: 31,
-    endProgress: 40,
-  },
-  {
-    year: "Mid-2000s - Acreage Growth Begins",
-    text: "Regions with higher fire frequencies also began seeing larger burned areas, driven by drier conditions and worsening fuels.",
-    startProgress: 41,
-    endProgress: 50,
-  },
+    // 31 - 50 (Mid 2000s - Hotspots Emerging)
+    {
+      year: "Mid-2000s - Rising Hotspots",
+      text: "Certain counties, especially Riverside in Southern California, started to show a noticeable rise in wildfire counts.",
+      startProgress: 31,
+      endProgress: 40,
+    },
+    {
+      year: "Mid-2000s - Acreage Growth Begins",
+      text: "Regions with higher fire frequencies also began seeing larger burned areas, driven by drier conditions and worsening fuels.",
+      startProgress: 41,
+      endProgress: 50,
+    },
 
-  // 51 - 65 (2007 Peak Year)
-  {
-    year: "2007 - Fire Ignitions Surge",
-    text: "The pivotal year 2007 witnessed a record 13,377 fire ignition events — a clear escalation from prior trends.",
-    startProgress: 51,
-    endProgress: 58,
-  },
-  {
-    year: "2007 - Burned Acreage Spike",
-    text: "The acreage burned also dramatically increased in 2007, signaling a shift to larger, more severe wildfire events.",
-    startProgress: 59,
-    endProgress: 65,
-  },
+    // 51 - 65 (2007 Peak Year)
+    {
+      year: "2007 - Fire Ignitions Surge",
+      text: "The pivotal year 2007 witnessed a record 13,377 fire ignition events — a clear escalation from prior trends.",
+      startProgress: 51,
+      endProgress: 58,
+    },
+    {
+      year: "2007 - Burned Acreage Spike",
+      text: "The acreage burned also dramatically increased in 2007, signaling a shift to larger, more severe wildfire events.",
+      startProgress: 59,
+      endProgress: 65,
+    },
 
-  // 66 - 80 (Drivers Behind Geography Patterns)
-  {
-    year: "Geographic Drivers - Urban Influence",
-    text: "Counties near urban areas (like Riverside) experienced frequent, smaller fires, driven by local ignition factors and management practices.",
-    startProgress: 66,
-    endProgress: 73,
-  },
-  {
-    year: "Geographic Drivers - Wildland Size Matters",
-    text: "Counties with vast wildlands (San Diego, Los Angeles) saw fewer fires but significantly higher acreage burned per event.",
-    startProgress: 74,
-    endProgress: 80,
-  },
+    // 66 - 80 (Drivers Behind Geography Patterns)
+    {
+      year: "Geographic Drivers - Urban Influence",
+      text: "Counties near urban areas (like Riverside) experienced frequent, smaller fires, driven by local ignition factors and management practices.",
+      startProgress: 66,
+      endProgress: 73,
+    },
+    {
+      year: "Geographic Drivers - Wildland Size Matters",
+      text: "Counties with vast wildlands (San Diego, Los Angeles) saw fewer fires but significantly higher acreage burned per event.",
+      startProgress: 74,
+      endProgress: 80,
+    },
 
-  // 81 - 90 (Conclusion)
-  {
-    year: "Conclusion - Fire Patterns Over Time",
-    text: "From moderate 1990s fires to 2007’s extremes, California's wildfire geography has evolved due to climate stress, fuel build-up, and topography.",
-    startProgress: 81,
-    endProgress: 90,
-  },
+    // 81 - 90 (Conclusion)
+    {
+      year: "Conclusion - Fire Patterns Over Time",
+      text: "From moderate 1990s fires to 2007’s extremes, California's wildfire geography has evolved due to climate stress, fuel build-up, and topography.",
+      startProgress: 81,
+      endProgress: 90,
+    },
 
-  // 91 - 1000 (Trivia)
-  {
-    year: "Extreme Burned Acreage ",
-    text: "Some years saw burned acreage spike over 210%, even hitting an incredible 1343% jump — showcasing the volatility of wildfire seasons. Why?",
-    startProgress: 91,
-    endProgress: 1000,
-  },
-];
-
+    // 91 - 1000 (Trivia)
+    {
+      year: "Extreme Burned Acreage ",
+      text: "Some years saw burned acreage spike over 210%, even hitting an incredible 1343% jump — showcasing the volatility of wildfire seasons. Why?",
+      startProgress: 91,
+      endProgress: 1000,
+    },
+  ];
 
   let wildfireVisibleFacts = $derived(
     wildfireFacts.filter(
@@ -324,16 +329,7 @@ Climate Patterns:
 
     <div class="horizontal-buttons">
       <div class="row">
-        <div class="col-4">
-          <button
-            class="btn w-100 {activeSection === 'ENVIRONMENTAL'
-              ? 'active-btn'
-              : ''}"
-            onclick={() => (activeSection = "ENVIRONMENTAL")}
-          >
-            ENVIRONMENTAL
-          </button>
-        </div>
+        
         <div class="col-4">
           <button
             class="btn w-100 {activeSection === 'GEOGRAPHICAL'
@@ -350,6 +346,16 @@ Climate Patterns:
             onclick={() => (activeSection = "SEASONAL")}
           >
             SEASONAL
+          </button>
+        </div>
+        <div class="col-4">
+          <button
+            class="btn w-100 {activeSection === 'ENVIRONMENTAL'
+              ? 'active-btn'
+              : ''}"
+            onclick={() => (activeSection = "ENVIRONMENTAL")}
+          >
+            ENVIRONMENTAL
           </button>
         </div>
       </div>
@@ -506,62 +512,67 @@ Climate Patterns:
 
       <!-- Visualization section that appears at progress >= 10 -->
       <!-- Visualization section that appears at progress >= 10 -->
-<div class="col-md-8">
-  {#if showVisualizations}
-    {#if activeSection === "SEASONAL"}
-      <div class="fixed-right-visualizations mt-custom-2" in:fly={{ y: 200, duration: 800, delay: 300 }}>
+      <div class="col-md-8">
+        {#if showVisualizations}
+          {#if activeSection === "SEASONAL"}
+            <div
+              class="fixed-right-visualizations mt-custom"
+              in:fly={{ y: 200, duration: 800, delay: 300 }}
+            >
+              <div class="viz-container" style="height: {vizContainerHeight}">
+                <Seasons
+                  csvPath="./fire_climate_data.csv"
+                  currentProgress={progress}
+                />
+                <!-- <p class="small text-muted">Progress: {progress}</p> -->
+              </div>
 
-        <div class="viz-container ">
-          <Seasons
-            csvPath="./fire_climate_data.csv"
-            currentProgress={progress}
-          />
-          <!-- <p class="small text-muted">Progress: {progress}</p> -->
-        </div>
+              <div class="viz-container" style="height: {vizContainerHeight}">
+                <SeasonsOld
+                  csvPath="./fire_climate_data.csv"
+                  currentProgress={progress}
+                />
+                <!-- <p class="small text-muted">Progress: {progress}</p> -->
+              </div>
+            </div>
+          {:else}
+            <div
+              class="fixed-right-visualizations d-flex flex-row"
+              in:fly={{ y: 200, duration: 800, delay: 300 }}
+            >
+              <div class="viz-container mt-4 flex-fill me-3" style="height: {vizContainerHeight}">
+                {#if activeSection === "ENVIRONMENTAL"}
+                  <FireDurationAndPrecip {progress} />
+                {:else if activeSection === "GEOGRAPHICAL"}
+                  <HexbinMap
+                    csvPath="./fire_points_updated.csv"
+                    geojsonPath="./california-counties.geojson"
+                    {progress}
+                  />
+                {/if}
+                <!-- <p class="small text-muted">Progress 1: {progress}</p> -->
+              </div>
 
-        <div class="viz-container ">
-          <SeasonsOld
-            csvPath="./fire_climate_data.csv"
-            currentProgress={progress}
-          />
-          <!-- <p class="small text-muted">Progress: {progress}</p> -->
-        </div>
-      </div>
-    {:else}
-      <div class="fixed-right-visualizations d-flex flex-row" in:fly={{ y: 200, duration: 800, delay: 300 }}>
-        <div class="viz-container mt-4 flex-fill me-3">
-          {#if activeSection === "ENVIRONMENTAL"}
-            <FireDurationAndPrecip {progress} />
-          {:else if activeSection === "GEOGRAPHICAL"}
-            <HexbinMap
-              csvPath="./fire_points_updated.csv"
-              geojsonPath="./california-counties.geojson"
-              {progress}
-            />
+              <div class="viz-container mb-4 mt-4 flex-fill ms-3" style="height: {vizContainerHeight}">
+                {#if activeSection === "ENVIRONMENTAL"}
+                  <ParallelCoordsWithDualCharts {progress} />
+                {:else if activeSection === "GEOGRAPHICAL"}
+                  <CountyHeatmap
+                    csvPath="./fire_points_updated.csv"
+                    initialStartYear={1992}
+                    initialEndYear={2020}
+                    initialTopN={5}
+                    {progress}
+                  />
+                {/if}
+                <!-- <p class="small text-muted">Progress 2: {progress}</p> -->
+              </div>
+            </div>
           {/if}
-          <!-- <p class="small text-muted">Progress 1: {progress}</p> -->
-        </div>
-
-        <div class="viz-container mb-4 mt-4 flex-fill ms-3">
-          {#if activeSection === "ENVIRONMENTAL"}
-            <ParallelCoordsWithDualCharts {progress} />
-          {:else if activeSection === "GEOGRAPHICAL"}
-            <CountyHeatmap
-              csvPath="./fire_points_updated.csv"
-              initialStartYear={1992}
-              initialEndYear={2020}
-              initialTopN={5}
-              {progress}
-            />
-          {/if}
-          <!-- <p class="small text-muted">Progress 2: {progress}</p> -->
-        </div>
+        {/if}
       </div>
-    {/if}
-  {/if}
-</div>
-
-
+    </div>
+  </div>
 </main>
 
 <!-- Permanent Earth Button -->
@@ -720,7 +731,7 @@ Climate Patterns:
     color: #3e2c28;
     padding: 1rem;
     width: 100%;
-    height: 35rem;
+    /* height: 35rem; */
   }
 
   /* Content area */
