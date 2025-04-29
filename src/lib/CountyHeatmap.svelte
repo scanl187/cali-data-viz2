@@ -20,12 +20,14 @@
   const cellWidth = 60;
   const cellHeight = 20;
 
-  // ✅ Updated combined reactive block
+  let currentVisibleYear = initialStartYear;
+
   $: if ((topN || metric) && allYears.length && progress >= 12) {
     const progressAfterThreshold = progress - 12;
     const remainingProgress = 100 - 12;
     const yearsToShow = Math.floor((progressAfterThreshold / remainingProgress) * (initialEndYear - initialStartYear));
     const visibleYears = allYears.slice(0, yearsToShow + 1);
+    currentVisibleYear = Math.min(initialEndYear, initialStartYear + yearsToShow);
     updateHeatmap(visibleYears);
   }
 
@@ -66,94 +68,93 @@
   }
 
   function getReadableTextColor(backgroundColor) {
-  const rgb = d3.color(backgroundColor);
-  if (!rgb) return "#000"; // fallback
-  const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-  return brightness > 128 ? "#000" : "#fff";
-}
+    const rgb = d3.color(backgroundColor);
+    if (!rgb) return "#000"; // fallback
+    const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+    return brightness > 128 ? "#000" : "#fff";
+  }
 
-function draw(countyOrder, yYears) {
-  d3.select(container).selectAll('*').remove();
+  function draw(countyOrder, yYears) {
+    d3.select(container).selectAll('*').remove();
 
-  const margin = { top: 80, right: 20, bottom: 40, left: 80 };
-  const width = margin.left + margin.right + cellWidth * countyOrder.length;
-  const height = margin.top + margin.bottom + cellHeight * yYears.length;
+    const margin = { top: 80, right: 20, bottom: 40, left: 80 };
+    const width = margin.left + margin.right + cellWidth * countyOrder.length;
+    const height = margin.top + margin.bottom + cellHeight * yYears.length;
 
-  const svg = d3.select(container)
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height);
+    const svg = d3.select(container)
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height);
 
-  const g = svg.append('g')
-    .attr('transform', `translate(${margin.left},${margin.top})`);
+    const g = svg.append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
-  const x = d3.scaleBand()
-    .domain(countyOrder)
-    .range([0, cellWidth * countyOrder.length])
-    .padding(0.1);
+    const x = d3.scaleBand()
+      .domain(countyOrder)
+      .range([0, cellWidth * countyOrder.length])
+      .padding(0.1);
 
-  const y = d3.scaleBand()
-    .domain(yYears)
-    .range([0, cellHeight * yYears.length]);
+    const y = d3.scaleBand()
+      .domain(yYears)
+      .range([0, cellHeight * yYears.length]);
 
-  const maxCount = d3.max(heatmapData, d => d.fire_count);
-  const colorScale = d3.scaleSequential()
-    .domain([0, maxCount])
-    .interpolator(d3.interpolateReds);
+    const maxCount = d3.max(heatmapData, d => d.fire_count);
+    const colorScale = d3.scaleSequential()
+      .domain([0, maxCount])
+      .interpolator(d3.interpolateReds);
 
-  g.selectAll("rect")
-    .data(heatmapData)
-    .enter()
-    .append("rect")
-    .attr("x", d => x(d.county))
-    .attr("y", d => y(d.year))
-    .attr("width", cellWidth)
-    .attr("height", cellHeight)
-    .style("fill", d => colorScale(d.fire_count))
-    .style("stroke", "#fff");
+    g.selectAll("rect")
+      .data(heatmapData)
+      .enter()
+      .append("rect")
+      .attr("x", d => x(d.county))
+      .attr("y", d => y(d.year))
+      .attr("width", cellWidth)
+      .attr("height", cellHeight)
+      .style("fill", d => colorScale(d.fire_count))
+      .style("stroke", "#fff");
 
-  g.selectAll("text.cell")
-    .data(heatmapData)
-    .enter()
-    .append("text")
-    .attr("class", "cell")
-    .attr("x", d => x(d.county) + cellWidth / 2)
-    .attr("y", d => y(d.year) + cellHeight / 2)
-    .attr("text-anchor", "middle")
-    .attr("dominant-baseline", "middle")
-    .attr("font-size", "12px")
-    .attr("fill", d => getReadableTextColor(colorScale(d.fire_count)))
-    .text(d => d.fire_count > 0 ? Math.round(d.fire_count) : '');
+    g.selectAll("text.cell")
+      .data(heatmapData)
+      .enter()
+      .append("text")
+      .attr("class", "cell")
+      .attr("x", d => x(d.county) + cellWidth / 2)
+      .attr("y", d => y(d.year) + cellHeight / 2)
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .attr("font-size", "12px")
+      .attr("fill", d => getReadableTextColor(colorScale(d.fire_count)))
+      .text(d => d.fire_count > 0 ? Math.round(d.fire_count) : '');
 
-  svg.append("g")
-    .attr("transform", `translate(${margin.left},${margin.top - 10})`)
-    .selectAll("text")
-    .data(countyOrder)
-    .enter()
-    .append("text")
-    .attr("x", d => x(d) + cellWidth / 2)
-    .attr("y", 0)
-    .attr("text-anchor", "start")
-    .attr("transform", d => `rotate(-45, ${x(d) + cellWidth / 2}, 0)`)
-    .attr("font-weight", "bold")
-    .attr("font-size", "12px")
-    .text(d => d);
+    svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top - 10})`)
+      .selectAll("text")
+      .data(countyOrder)
+      .enter()
+      .append("text")
+      .attr("x", d => x(d) + cellWidth / 2)
+      .attr("y", 0)
+      .attr("text-anchor", "start")
+      .attr("transform", d => `rotate(-45, ${x(d) + cellWidth / 2}, 0)`)
+      .attr("font-weight", "bold")
+      .attr("font-size", "12px")
+      .text(d => d);
 
-  svg.append("g")
-    .attr("transform", `translate(${margin.left - 10},${margin.top})`)
-    .selectAll("text")
-    .data(yYears)
-    .enter()
-    .append("text")
-    .attr("x", -5)
-    .attr("y", d => y(d) + cellHeight / 2)
-    .attr("text-anchor", "end")
-    .attr("dominant-baseline", "middle")
-    .attr("font-weight", "bold")
-    .attr("font-size", "12px")
-    .text(d => d);
-}
-
+    svg.append("g")
+      .attr("transform", `translate(${margin.left - 10},${margin.top})`)
+      .selectAll("text")
+      .data(yYears)
+      .enter()
+      .append("text")
+      .attr("x", -5)
+      .attr("y", d => y(d) + cellHeight / 2)
+      .attr("text-anchor", "end")
+      .attr("dominant-baseline", "middle")
+      .attr("font-weight", "bold")
+      .attr("font-size", "12px")
+      .text(d => d);
+  }
 </script>
 
 <!-- Toggle UI -->
@@ -170,10 +171,30 @@ function draw(countyOrder, yYears) {
 </div>
 
 <!-- Heatmap -->
-<div bind:this={container} style="overflow-x: auto; overflow-y: auto; max-width: 100%; max-height: 800px; margin: auto;"></div>
+<div style="position: relative;">
+  <div bind:this={container} style="overflow-x: auto; overflow-y: auto; max-width: 100%; max-height: 800px; margin: auto;"></div>
+  <div class="year-label">
+    <strong>{currentVisibleYear}</strong>
+  </div>
+</div>
 
 <style>
   svg {
     font-family: 'Segoe UI', sans-serif;
   }
+
+  .year-label {
+  position: absolute;
+  top: -20px;       /* was 10px */
+  right: 15px;    /* was 40px */
+  font-size: 32px;
+  font-weight: 900;
+  color: #3e2c28;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
 </style>
