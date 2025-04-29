@@ -18,8 +18,8 @@
     let currentMaxYear = 1984; // Initialize with the minimum year
     let maxDataYear = 2020; // Will be updated after loading data
 
-    const chartMaxWidth = 550;
-    const chartHeight = 200;
+    const chartMaxWidth = 450;
+    const chartHeight = 190;
 
     const chartOptions = [
       { value: "precip", label: "Precipitation vs Fire Count" },
@@ -114,7 +114,8 @@
         margin: { t: 50, r: 50, l: 50, b: 30 },
         title: `California Wildfires (1984-${currentMaxYear}) - Parallel Coordinates`,
         displaylogo: false,
-        width: chartMaxWidth
+        width: chartMaxWidth,
+        height: 290
       });
 
       updateSelectedYears();
@@ -196,7 +197,7 @@
         data = data.filter(d => selectedYears.includes(d.YEAR));
       }
 
-      const margin = { top: 30, right: 60, bottom: 50, left: 60 };
+      const margin = { top: 20, right: 60, bottom: 50, left: 60 };
       const width = chartMaxWidth - margin.left - margin.right;
       const height = chartHeight - margin.top - margin.bottom;
 
