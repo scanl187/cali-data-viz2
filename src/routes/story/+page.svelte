@@ -137,7 +137,7 @@
       year: "Conclusion - Seasonal Fire Regime Shifts",
       text: "California’s wildfire seasons have evolved drastically, reflecting fuel build-up, climate shifts, and altered precipitation patterns.",
       startProgress: 91,
-      endProgress: 100,
+      endProgress: 1000,
     },
   ];
 
@@ -534,7 +534,7 @@ Climate Patterns:
         {#if showVisualizations}
           {#if activeSection === "SEASONAL"}
             <div
-              class="fixed-right-visualizations mt-custom"
+              class="fixed-right-visualizations mt-custom-2"
               in:fly={{ y: 200, duration: 800, delay: 300 }}
             >
               <div class="viz-container">
@@ -783,6 +783,10 @@ Climate Patterns:
   .mt-custom {
     margin-top: 4rem;
   }
+  .mt-custom-2 {
+  margin-top: 2rem; /* Or whatever smaller margin you prefer */
+}
+
 
   .question-container {
     pointer-events: none; /* Let clicks pass through */

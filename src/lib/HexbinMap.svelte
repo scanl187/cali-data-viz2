@@ -23,7 +23,6 @@
 
   const width = 400;
   const height = 475;
-  // let vizContainerHeight;
 
   function getReadableTextColor(backgroundColor) {
     const rgb = d3.color(backgroundColor);
@@ -32,7 +31,7 @@
     return brightness > 128 ? "#000" : "#fff";
   }
 
-  const countyLayout = [
+  const countyLayout = [ /* your counties list unchanged */ 
     { name: "Del Norte", col: 3, row: 0 },
     { name: "Siskiyou", col: 4, row: 0 },
     { name: "Modoc", col: 5, row: 0 },
@@ -103,6 +102,7 @@
     const raw = await d3.csv("./fire_points_updated.csv", d3.autoType);
     data = raw.filter((d) => d.latitude && d.longitude && d.county);
     overallMax = d3.max(data, (d) => (metric === "acres" ? d.acres : 1)) || 1;
+
     tooltip = d3
       .select("body")
       .append("div")
@@ -118,7 +118,6 @@
       .style("z-index", 9999);
   });
 
-  // ✅ Updated reactive block
   $: if (
     svg &&
     data.length &&
@@ -134,14 +133,9 @@
     return (
       d3
         .range(6)
-        .map((i) => {
-          const x = radius * Math.cos(angle * i);
-          const y = radius * Math.sin(angle * i);
-          return [x, y];
-        })
-        .reduce((path, [x, y], i) => {
-          return path + (i === 0 ? `M${x},${y}` : `L${x},${y}`);
-        }, "") + "Z"
+        .map((i) => [radius * Math.cos(angle * i), radius * Math.sin(angle * i)])
+        .reduce((path, [x, y], i) => path + (i === 0 ? `M${x},${y}` : `L${x},${y}`), "")
+      + "Z"
     );
   }
 
@@ -157,10 +151,7 @@
     );
 
     const localMax = d3.max(Array.from(valueByCounty.values()));
-    const color = d3
-      .scaleSequential(d3.interpolateReds)
-      .domain([0, localMax || 1]);
-
+    const color = d3.scaleSequential(d3.interpolateReds).domain([0, localMax || 1]);
     const hexPath = drawHexagonPath(hexRadius);
 
     countyLayout.forEach(({ name, col, row }) => {
@@ -169,8 +160,7 @@
 
       const value = valueByCounty.get(name) || 0;
 
-      svgSel
-        .append("path")
+      svgSel.append("path")
         .attr("d", hexPath)
         .attr("transform", `translate(${xOffset},${yOffset})`)
         .attr("fill", color(value))
@@ -178,9 +168,7 @@
         .attr("stroke-width", 0.8)
         .on("mouseover", function () {
           tooltip
-            .html(
-              `<strong>${name}</strong><br>${metric === "acres" ? "Acres Burned" : "Fire Count"}: ${Math.round(value)}`,
-            )
+            .html(`<strong>${name}</strong><br>${metric === "acres" ? "Acres Burned" : "Fire Count"}: ${Math.round(value)}`)
             .style("opacity", 1);
         })
         .on("mousemove", function (event) {
@@ -192,8 +180,7 @@
           tooltip.style("opacity", 0);
         });
 
-      svgSel
-        .append("text")
+      svgSel.append("text")
         .attr("x", xOffset)
         .attr("y", yOffset + 4)
         .text(name)
@@ -202,14 +189,14 @@
         .attr("fill", getReadableTextColor(color(value)));
     });
 
+    // Legend creation remains unchanged
     const legendHeight = 150;
     const legendWidth = 12;
     const gradientId = "legend-gradient";
     const legendX = width - 90;
 
     const defs = svgSel.append("defs");
-    const gradient = defs
-      .append("linearGradient")
+    const gradient = defs.append("linearGradient")
       .attr("id", gradientId)
       .attr("x1", "0%")
       .attr("y1", "100%")
@@ -218,33 +205,28 @@
 
     const stops = d3.range(0, 1.01, 0.1);
     stops.forEach((s) => {
-      gradient
-        .append("stop")
+      gradient.append("stop")
         .attr("offset", `${s * 100}%`)
         .attr("stop-color", color(s * localMax));
     });
 
-    svgSel
-      .append("rect")
+    svgSel.append("rect")
       .attr("x", legendX)
       .attr("y", 20)
       .attr("width", legendWidth)
       .attr("height", legendHeight)
       .style("fill", `url(#${gradientId})`);
 
-    const legendScale = d3
-      .scaleLinear()
+    const legendScale = d3.scaleLinear()
       .domain([0, localMax])
       .range([legendHeight, 0]);
 
     const legendAxis = d3.axisRight(legendScale).ticks(5);
-    svgSel
-      .append("g")
+    svgSel.append("g")
       .attr("transform", `translate(${legendX + legendWidth + 8}, 20)`)
       .call(legendAxis);
 
-    svgSel
-      .append("text")
+    svgSel.append("text")
       .attr("x", legendX - 10)
       .attr("y", 14)
       .attr("text-anchor", "start")
@@ -254,18 +236,14 @@
   }
 </script>
 
-<!-- Toggle -->
 <div style="text-align:center; margin-bottom: 0.5rem;">
   <label><input type="radio" bind:group={metric} value="count" /> Count</label>
-  <label style="margin-left: 1rem;"
-    ><input type="radio" bind:group={metric} value="acres" /> Acres</label
-  >
+  <label style="margin-left: 1rem;"><input type="radio" bind:group={metric} value="acres" /> Acres</label>
 </div>
 
 {#if selectedYear}
   <div class="year-label">
-    <strong>Year:</strong>
-    {selectedYear}
+    <strong>Year:</strong> {selectedYear}
   </div>
 {/if}
 
