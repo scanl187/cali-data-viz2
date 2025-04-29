@@ -16,9 +16,9 @@
 </div>
 
 <div class="container mt-3 border rounded p-3 pb-0">
-    <p><strong>The California Story</strong> &#40;<i>coming soon! See <a href="https://www.canva.com/design/DAGkEZyUToQ/7FScuYSLHvSP-LcsI2CvKw/edit?utm_content=DAGkEZyUToQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank">plan here</a>  </i>&#41;</p>
+    <p><strong>The California Story</strong>
     
-    <p>Beta Release: <a href="{base}/story">The California Story: Golden State of Fire</a></p>
+    <p>Final Release: <a href="{base}/story">The California Story: Golden State of Fire</a></p>
 </div>
 
 <div class="container mt-3 border rounded p-3 pb-0">
