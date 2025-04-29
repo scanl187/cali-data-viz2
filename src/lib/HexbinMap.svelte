@@ -18,7 +18,7 @@
     : undefined;
 
   const width = 400;
-  const height = 475;
+  let height = window.innerHeight * 0.6;
 
   function getReadableTextColor(backgroundColor) {
     const rgb = d3.color(backgroundColor);
