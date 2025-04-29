@@ -9,9 +9,14 @@
   import FireDurationAndPrecip from "$lib/FireDurationAndPrecip.svelte";
   import HexbinMap from "$lib/HexbinMap.svelte";
   import { onMount } from "svelte";
-    import { base } from "$app/paths";
+  import { base } from "$app/paths";
+  import Introduction from "$lib/Introduction.svelte";
 
   let progress = $state(0);
+
+  let envSection;
+  let geoSection;
+  let seasSection;
 
   // ACTIVE SECTION STATE
   let activeSection = $state("GEOGRAPHICAL");
@@ -21,7 +26,7 @@
 
   function getQuestionText() {
     if (activeSection === "ENVIRONMENTAL") {
-      return "How do climate factors like temperature, and wind influence wildfire frequency and severity?";
+      return "How do climate factors like precipitation, temperature, and wind influence wildfire frequency and severity?";
     } else if (activeSection === "GEOGRAPHICAL") {
       return "How have California wildfires evolved over time in terms of frequency, size, and severity?";
     } else if (activeSection === "SEASONAL") {
@@ -32,7 +37,7 @@
 
   // Process text into array of characters
   let questionText = $derived(getQuestionText());
-  let showQuestion = $derived(progress > 1 && progress < 10);
+  let showQuestion = $derived(progress > 0 && progress < 10);
   let showFacts = $derived(progress >= 12 && progress <= 100);
   let showVisualizations = $derived(progress >= 10);
 
@@ -41,60 +46,102 @@
     if (progress < 10) {
       return "col-md-10 question-expanded";
     } else {
-      return "col-md-6";
+      return "col-md-4";
     }
   });
   const seasonalFacts = [
+    // 15 - 35 (Early 1990s Baseline)
     {
-      year: "Early 1990s (Baseline: 1992–1995)",
-      text: `• Moderate Fire Activity:
-– Winter fire counts: typically between 100–400 (e.g., 1992: January 92, February 54, December 101; total for winter=247).
-– Summer peak: consistently high (e.g., 1992: June 2185, July 2062, August 2284).
-– Overall totals (e.g., 1995: ~7,381 fires) set the baseline with lower fuel accumulation.`,
+      year: "1992–1995 - Moderate Winter Activity",
+      text: "Winter fire counts typically ranged between 100–400. (Example: 1992 — January 92, February 54, December 101.)",
       startProgress: 15,
+      endProgress: 22,
+    },
+    {
+      year: "1992–1995 - Consistently High Summer Peaks",
+      text: "Summer months consistently peaked with high fire activity — June, July, and August each over 2,000 fires in 1992.",
+      startProgress: 23,
+      endProgress: 29,
+    },
+    {
+      year: "1992–1995 - Lower Overall Fire Totals",
+      text: "Overall annual totals, like ~7,381 fires in 1995, reflect a baseline of moderate activity and lower fuel accumulation.",
+      startProgress: 30,
       endProgress: 35,
     },
+
+    // 36 - 55 (Mid 2000s - Emerging Extremes)
     {
-      year: "Mid-2000s (Emerging Extremes – 2006)",
-      text: `• Record Summer Outlier:
-– 2006 July fires reached a record 2933, highlighting intense fuel-drying conditions.
-• Initial Winter Shift:
-– Winter counts begin to rise (e.g., 2006: January 240, December 400), hinting at altered precipitation and warming trends.
-• Fuel Build-Up Notice:
-– Decades of fire suppression mean denser, more abundant fuels(shrubs and vegetation) are now present.`,
+      year: "2006 - Record Summer Outlier",
+      text: "July 2006 experienced 2,933 fires — a record-setting month, driven by extreme fuel-drying conditions.",
       startProgress: 36,
+      endProgress: 41,
+    },
+    {
+      year: "2006 - Winter Fire Counts Rise",
+      text: "Winter fire counts started increasing (e.g., January 240, December 400), indicating shifting seasonal patterns.",
+      startProgress: 42,
+      endProgress: 47,
+    },
+    {
+      year: "2006 - Fuel Build-Up Notice",
+      text: "Decades of wildfire suppression led to denser, highly combustible vegetation and shrubs by the mid-2000s.",
+      startProgress: 48,
       endProgress: 55,
     },
+
+    // 56 - 75 (Late 2000s - Extreme Activity 2007)
     {
-      year: "Late 2000s (Extreme Activity – 2007)",
-      text: `• Sharp Increase in Overall Fires:
-– Estimated total in 2007 ≈ 13,428 fires, a dramatic jump from baseline.
-• Atypical Winter Behavior:
-– Winter anomalies with January 2007 hitting 1400+ fires, far exceeding previous winter levels.
-• Sustained High Summer Activity:
-– Continued high counts in July (≈2283) and August (≈1819) reinforce extreme summer conditions.`,
+      year: "2007 - Sharp Rise in Fire Events",
+      text: "Total estimated fires reached ~13,428 in 2007 — nearly doubling historical averages.",
       startProgress: 56,
+      endProgress: 61,
+    },
+    {
+      year: "2007 - Atypical Winter Anomalies",
+      text: "Winter fires skyrocketed in January 2007 alone, exceeding 1,400 fires — far above normal winter activity.",
+      startProgress: 62,
+      endProgress: 68,
+    },
+    {
+      year: "2007 - Sustained Extreme Summers",
+      text: "Summer months like July (2,283 fires) and August (1,819 fires) continued the extreme fire trends.",
+      startProgress: 69,
       endProgress: 75,
     },
+
+    // 76 - 90 (Drivers Behind Seasonal Changes)
     {
-      year: "Underlying Drivers (Supported by Research)",
-      text: `• Fuel Accumulation & Historical Fire Suppression:
-– Decades of reduced wildfire occurrence have allowed fine fuels and vegetation to build up.
-• Climate Change – Extreme Fire Weather:
-– Rising temperatures, lower humidity, and extended dry seasons (California was affected by droughts from 2007-09) have increased the frequency of extreme fire weather days.
-• Altered Seasonal Precipitation Patterns:
-– Delayed or reduced winter rains extend the period during which fuels remain dry, leading to uncharacteristic winter fire activity (observed in 2007 and parts of the 2010s).
-• Enhanced Lightning Activity:
-– Warmer, drier conditions can boost convective thunderstorms, increasing lightning ignitions—especially under “hot-wet” conditions.`,
+      year: "Driver - Fuel Accumulation Over Decades",
+      text: "Historical fire suppression allowed fine fuels to build up significantly, enhancing fire potential.",
       startProgress: 76,
-      endProgress: 90,
+      endProgress: 79,
     },
     {
-      year: "Conclusion",
-      text: `• The evolution of California wildfires—from the moderate baseline of the early 1990s to the extreme events of 2006 and 2007—reflects a combination of accumulated fuels due to prolonged fire suppression, a shifting climate that lengthens dry seasons, and more frequent extreme weather events.
-• These data points align closely with scientific research, demonstrating that both natural and human-influenced factors are reshaping the state's fire regime.`,
+      year: "Driver - Climate Change Extremes",
+      text: "Higher temperatures, extended droughts (2007–09), and lower humidity contributed to more fire weather days.",
+      startProgress: 80,
+      endProgress: 83,
+    },
+    {
+      year: "Driver - Shifts in Precipitation Patterns",
+      text: "Reduced and delayed winter rainfall left vegetation drier for longer periods, encouraging winter fires.",
+      startProgress: 84,
+      endProgress: 87,
+    },
+    {
+      year: "Driver - Lightning Activity Increases",
+      text: "Warmer, stormier conditions boosted convective lightning — increasing ignition sources, especially under 'hot-wet' setups.",
+      startProgress: 88,
+      endProgress: 90,
+    },
+
+    // 91 - 100 (Conclusion)
+    {
+      year: "Conclusion - Seasonal Fire Regime Shifts",
+      text: "California’s wildfire seasons have evolved drastically, reflecting fuel build-up, climate shifts, and altered precipitation patterns.",
       startProgress: 91,
-      endProgress: 100,
+      endProgress: 1000,
     },
   ];
 
@@ -104,58 +151,77 @@
     ),
   );
   const wildfireFacts = [
+    // 15 - 30 (Early 1990s - Baseline)
     {
-      year: "Early 1990s (Baseline Distribution)",
-      text: `• Wildfire Counts:
-– Fires were moderately distributed across California’s counties, setting a baseline frequency.
-• Burned Acres:
-– Total acreage burned was relatively low, reflecting less extreme weather and limited fuel accumulation across regions.`,
+      year: "1992–1995 - Baseline Wildfire Distribution",
+      text: "Fires were moderately distributed across most California counties, with no extreme concentration areas.",
       startProgress: 15,
+      endProgress: 20,
+    },
+    {
+      year: "1992–1995 - Low Burned Acreage",
+      text: "Burned acreage remained relatively low statewide, due to milder weather and minimal fuel accumulation.",
+      startProgress: 21,
       endProgress: 30,
     },
+
+    // 31 - 50 (Mid 2000s - Hotspots Emerging)
     {
-      year: "Mid-2000s (Emergence of Hotspots)",
-      text: `• Wildfire Counts:
-– Certain counties—particularly in Southern California (e.g., Riverside)—began to show significantly higher fire frequencies.
-• Burned Acres:
-– In parallel, burned acreage started increasing in these regions, as hotter, drier conditions and worsening fuel loads led to fires covering larger areas.`,
+      year: "Mid-2000s - Rising Hotspots",
+      text: "Certain counties, especially Riverside in Southern California, started to show a noticeable rise in wildfire counts.",
       startProgress: 31,
+      endProgress: 40,
+    },
+    {
+      year: "Mid-2000s - Acreage Growth Begins",
+      text: "Regions with higher fire frequencies also began seeing larger burned areas, driven by drier conditions and worsening fuels.",
+      startProgress: 41,
       endProgress: 50,
     },
+
+    // 51 - 65 (2007 Peak Year)
     {
-      year: "Pivotal Year – Late 2000s (2007)",
-      text: `• Wildfire Counts:
-– The record-setting 2007 marked a turning point with 13,377 fires, reflecting a dramatic upsurge in ignition events.
-• Burned Acres:
-– Simultaneously, there was a substantial jump in acres burned, underscoring a shift toward more severe fire events with expansive spatial impact.`,
+      year: "2007 - Fire Ignitions Surge",
+      text: "The pivotal year 2007 witnessed a record 13,377 fire ignition events — a clear escalation from prior trends.",
       startProgress: 51,
+      endProgress: 58,
+    },
+    {
+      year: "2007 - Burned Acreage Spike",
+      text: "The acreage burned also dramatically increased in 2007, signaling a shift to larger, more severe wildfire events.",
+      startProgress: 59,
       endProgress: 65,
     },
+
+    // 66 - 80 (Drivers Behind Geography Patterns)
     {
-      year: "Underlying Geographic Drivers",
-      text: `• Wildfire Counts:
-– Regional factors such as urban growth, terrain, and local management practices lead to disparities (e.g., high counts in urban-adjacent Riverside).
-• Burned Acres:
-– Geographic differences in vegetation and wildland continuity mean that counties with vast wildlands (like parts of San Diego and Los Angeles) experience fewer but much larger fires, resulting in notably higher burned acreage.`,
+      year: "Geographic Drivers - Urban Influence",
+      text: "Counties near urban areas (like Riverside) experienced frequent, smaller fires, driven by local ignition factors and management practices.",
       startProgress: 66,
-      endProgress: 80,
+      endProgress: 73,
     },
     {
-      year: "Conclusion",
-      text: `• Summary of Findings:
-– Over nearly 30 years, the spatial distribution of wildfire activity has evolved considerably.
-– Fire counts increased dramatically in hotspot regions, most notably in 2007, while burned acres surged over time—especially in counties with extensive wildlands.
-– This evolution reflects the combined impacts of climate extremes, historical fire suppression leading to fuel build-up, and inherent geographic differences in vegetation and topography.
-– These insights highlight the need for adaptive fire management strategies that address both ignition reduction and mitigation of large-scale fire spread.`,
+      year: "Geographic Drivers - Wildland Size Matters",
+      text: "Counties with vast wildlands (San Diego, Los Angeles) saw fewer fires but significantly higher acreage burned per event.",
+      startProgress: 74,
+      endProgress: 80,
+    },
+
+    // 81 - 90 (Conclusion)
+    {
+      year: "Conclusion - Fire Patterns Over Time",
+      text: "From moderate 1990s fires to 2007’s extremes, California's wildfire geography has evolved due to climate stress, fuel build-up, and topography.",
       startProgress: 81,
       endProgress: 90,
     },
+
+    // 91 - 1000 (Trivia)
     {
-      year: "Extreme Burned Acreage Swings (Trivia)",
-      text: `Trivia: Did you know that in some years the total burned acreage surged dramatically—exceeding a 210% increase in one year and reaching an astounding 1343% in another? 
-Imagine the extreme conditions and geographic influences that could drive such shifts!`,
+      year: "Extreme Burned Acreage ",
+      text: "Some years saw burned acreage spike over 210%, even hitting an incredible 1343% jump — showcasing the volatility of wildfire seasons. Why? Click me to find out!",
       startProgress: 91,
-      endProgress: 100,
+      endProgress: 1000,
+      click: true,
     },
   ];
 
@@ -167,28 +233,37 @@ Imagine the extreme conditions and geographic influences that could drive such s
 
   const precipFacts = [
     {
-      year: "2013–2018",
-      text: "2013, 2014, 2015, 2016, 2017 & 2018 were years of low to medium precipitation in California.",
+      year: "2013–2015",
+      text: `These three years saw low to medium precipitation on an average in all of California.
+Rim Fire (2013) – Burned approximately 257,314 acres in the Stanislaus National Forest and Yosemite National Park, making it the largest fire of the year and one of the biggest in California history.`,
       startProgress: 15,
-      endProgress: 85,
+      endProgress: 70,
     },
     {
-      year: "2019",
-      text: "2019 was a year of high precipitation across California.",
-      startProgress: 86,
+      year: "2016–2018",
+      text: `2016, 2017 & 2018 were years of low to medium precipitation in California.
+Soberanes Fire (2016) – Burned approximately 132,127 acres in Monterey County, starting from an illegal campfire; it became the most expensive wildfire to fight in U.S. history at the time, costing over $260 million.`,
+      startProgress: 46,
+      endProgress: 75,
+    },
+    {
+      year: "Pivotal Year: 2019",
+      text: `2019 was a year of high precipitation across California.
+Kincade Fire (2019) – Burned approximately 77,758 acres in Sonoma County; it was the largest wildfire in California in 2019.`,
+      startProgress: 75,
       endProgress: 1000,
     },
     {
-      year: "Precipitation & Wildfires",
-      text: "Lower precipitation years tend to have increased wildfire activity due to drier vegetation.",
-      startProgress: 91,
+      year: "Conclusion",
+      text: `Precipitation & Wildfires:
+– Lower precipitation years tend to have increased wildfire activity due to drier vegetation.
+Climate Patterns:
+– Year-to-year precipitation variation shows California's vulnerability to drought cycles.
+This begets a question - Could seasons as a whole impact wildfires? Click me to find out!.
+  `,
+      startProgress: 80,
       endProgress: 1000,
-    },
-    {
-      year: "Climate Patterns",
-      text: "Year-to-year precipitation variation shows California's vulnerability to drought cycles.",
-      startProgress: 91,
-      endProgress: 1000,
+      click: true,
     },
   ];
 
@@ -214,6 +289,18 @@ Imagine the extreme conditions and geographic influences that could drive such s
     ),
   );
 
+  function scrollToEnvironmental() {
+    activeSection = "ENVIRONMENTAL";
+    progress = 10.01;
+    envSection?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function scrollToSeasonal() {
+    activeSection = "SEASONAL";
+    progress = 10.01;
+    seasSection?.scrollIntoView({ behavior: "smooth" });
+  }
+
   // Adjust visualization position based on screen size
   onMount(() => {
     // Get initial screen width
@@ -232,183 +319,236 @@ Imagine the extreme conditions and geographic influences that could drive such s
   });
 </script>
 
+<Introduction introHeight={200} />
+
 <!-- Fixed Header (outside of Scroll) -->
-<header class="fixed-top">
-  <div class="container-fluid">
-    <div class="menu-bar">
-      <h1>GOLDEN STATE OF FIRE</h1>
-      <!-- <p>{progress}</p> -->
-      <div class="team-icon" onclick={() => (showTeam = !showTeam)}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="#3e2c28"
-        >
-          <path
-            d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 
+{#if progress >= 5}
+  <header class="fixed-top" transition:slide={{ duration: 400 }}>
+    <div class="container-fluid">
+      <div class="menu-bar d-flex justify-content-between align-items-center">
+        <div class="earth-btn">
+          <a href="{base}/immersive">
+            <div class="earth-content">
+              <img src="./earth.gif" alt="earthpic" />
+              <p>Immersive (3D) mode</p>
+            </div>
+          </a>
+        </div>
+
+        <h1 class="text-center m-0">GOLDEN STATE OF FIRE</h1>
+        <!-- <p>{progress}</p> -->
+        <div class="team-icon" onclick={() => (showTeam = !showTeam)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="#3e2c28"
+          >
+            <path
+              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 
                2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 
                10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 2.02 1.97 
                3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
-          />
-        </svg>
+            />
+          </svg>
+        </div>
       </div>
-    </div>
 
-    <div class="horizontal-buttons">
-      <div class="row">
-        <div class="col-4">
-          <button
-            class="btn w-100 {activeSection === 'ENVIRONMENTAL'
-              ? 'active-btn'
-              : ''}"
-            onclick={() => (activeSection = "ENVIRONMENTAL")}
-          >
-            ENVIRONMENTAL
-          </button>
-        </div>
-        <div class="col-4">
-          <button
-            class="btn w-100 {activeSection === 'GEOGRAPHICAL'
-              ? 'active-btn'
-              : ''}"
-            onclick={() => (activeSection = "GEOGRAPHICAL")}
-          >
-            GEOGRAPHICAL
-          </button>
-        </div>
-        <div class="col-4">
-          <button
-            class="btn w-100 {activeSection === 'SEASONAL' ? 'active-btn' : ''}"
-            onclick={() => (activeSection = "SEASONAL")}
-          >
-            SEASONAL
-          </button>
+      <div class="horizontal-buttons">
+        <div class="row">
+          <div class="col-4">
+            <button
+              class="btn w-100 {activeSection === 'GEOGRAPHICAL'
+                ? 'active-btn'
+                : ''}"
+              onclick={() => {
+                activeSection = "GEOGRAPHICAL";
+              }}
+            >
+              GEOGRAPHICAL
+            </button>
+          </div>
+          <div class="col-4">
+            <button
+              class="btn w-100 {activeSection === 'ENVIRONMENTAL'
+                ? 'active-btn'
+                : ''}"
+              onclick={() => {
+                activeSection = "ENVIRONMENTAL";
+              }}
+            >
+              ENVIRONMENTAL
+            </button>
+          </div>
+          <div class="col-4">
+            <button
+              class="btn w-100 {activeSection === 'SEASONAL'
+                ? 'active-btn'
+                : ''}"
+              onclick={() => {
+                activeSection = "SEASONAL";
+              }}
+            >
+              SEASONAL
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    {#if showTeam}
-      <div class="team-members">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>GitHub</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Dipan Bag</td>
-              <td>bag00003@umn.edu</td>
-              <td>dipan99</td>
-            </tr>
-            <tr>
-              <td>Aarav Kalkar</td>
-              <td>kalka046@umn.edu</td>
-              <td>aarav2703</td>
-            </tr>
-            <tr>
-              <td>Brandt Kringlie</td>
-              <td>kring089@umn.edu</td>
-              <td>bkringlie</td>
-            </tr>
-            <tr>
-              <td>Shane Lentsch</td>
-              <td>lents084@umn.edu</td>
-              <td>Shane-Lentsch</td>
-            </tr>
-            <tr>
-              <td>Marc Scanlan</td>
-              <td>scanl187@umn.edu</td>
-              <td>scanl187</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    {/if}
+      {#if showTeam}
+        <div class="team-members">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>GitHub</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Dipan Bag</td>
+                <td>bag00003@umn.edu</td>
+                <td>dipan99</td>
+              </tr>
+              <tr>
+                <td>Aarav Kalkar</td>
+                <td>kalka046@umn.edu</td>
+                <td>aarav2703</td>
+              </tr>
+              <tr>
+                <td>Brandt Kringlie</td>
+                <td>kring089@umn.edu</td>
+                <td>bkringlie</td>
+              </tr>
+              <tr>
+                <td>Shane Lentsch</td>
+                <td>lents084@umn.edu</td>
+                <td>Shane-Lentsch</td>
+              </tr>
+              <tr>
+                <td>Marc Scanlan</td>
+                <td>scanl187@umn.edu</td>
+                <td>scanl187</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      {/if}
+    </div>
+  </header>
+{/if}
+
+<!-- Fixed Question Text -->
+{#if progress > 0}
+  <div
+    class="content question-container"
+    style="
+      position: fixed;
+      z-index: 2000;
+      top: {progress < 10 ? '50%' : '150px'};
+      left: {progress < 10 ? '50%' : '0px'};
+      transform: translate({progress < 10 ? '-50%, -50%' : '0, 0'});
+      width: {progress < 10 ? 'auto' : '40%'};
+      max-width: {progress < 10 ? '90%' : '450px'};
+      transition: all 1s ease-out;
+    "
+  >
+    <p
+      class="question-text"
+      style="
+        font-size: {Math.max(48 - progress * 5, 15)}px; 
+        padding: {Math.max(40 - progress * 4, 5)}px;
+        min-height: {Math.max(200 - progress * 20, 50)}px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(204, 92, 60, 0.3);
+        margin-top: 0;
+        text-align: {progress < 10 ? 'center' : 'left'};
+      "
+    >
+      {questionText}
+    </p>
   </div>
-</header>
+{/if}
+{#if progress >= 10.01}
+  <section bind:this={envSection} style="margin-top: 20rem;"></section>
+  <section bind:this={geoSection} style="margin-top: 20rem;"></section>
+  <section bind:this={seasSection} style="margin-top: 20rem;"></section>
+{/if}
 
 <main class="pt-5 mt-5">
   <div class="container-fluid">
     <div class="row">
       <!-- Left column for facts -->
-      <div class="col-md-6">
-        {#if activeSection == "GEOGRAPHICAL"}
-          <div class="fixed-left-facts mt-custom">
-            {#each wildfireVisibleFacts as fact (fact.year)}
-              {@const scale = getFactScale(fact)}
-              <div
-                class="fact-box"
-                in:fly={{ y: 50, duration: 600 }}
-                out:fade={{ duration: 300 }}
-                style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
-              >
-                <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
-                <p
-                  style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+      <div class="col-md-4">
+        {#if (activeSection == "GEOGRAPHICAL" && wildfireVisibleFacts.length > 0) || (activeSection == "SEASONAL" && seasonalVisibleFacts.length > 0) || (activeSection == "ENVIRONMENTAL" && visibleFacts.length > 0)}
+          <div class="fixed-left-facts mt-custom" style="margin-top: 6rem;">
+            {#if activeSection == "GEOGRAPHICAL"}
+              {#each wildfireVisibleFacts as fact (fact.year)}
+                {@const scale = getFactScale(fact)}
+                <div
+                  class="fact-box"
+                  onclick={fact.click ? scrollToEnvironmental : undefined}
+                  in:fly={{ y: 100, duration: 600 }}
+                  out:fade={{ duration: 300 }}
+                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;
+                  cursor: {fact.click ? 'pointer' : 'default'};"
                 >
-                  {fact.text}
-                </p>
-              </div>
-            {/each}
-          </div>
-        {/if}
+                  <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
+                  <p
+                    style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+                  >
+                    {fact.text}
+                  </p>
+                </div>
+              {/each}
+            {/if}
 
-        {#if activeSection == "SEASONAL"}
-          <div class="fixed-left-facts mt-custom">
-            {#each seasonalVisibleFacts as fact (fact.year)}
-              {@const scale = getFactScale(fact)}
-              <div
-                class="fact-box"
-                in:fly={{ y: 50, duration: 600 }}
-                out:fade={{ duration: 300 }}
-                style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
-              >
-                <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
-                <p
-                  style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+            {#if activeSection == "SEASONAL"}
+              {#each seasonalVisibleFacts as fact (fact.year)}
+                {@const scale = getFactScale(fact)}
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                <div
+                  class="fact-box"
+                  in:fly={{ y: 100, duration: 600 }}
+                  out:fade={{ duration: 300 }}
+                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
                 >
-                  {fact.text}
-                </p>
-              </div>
-            {/each}
-          </div>
-        {/if}
+                  <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
+                  <p
+                    style="font-size: calc({scale.fontSize} * 0.7); white-space: pre-line;"
+                  >
+                    {fact.text}
+                  </p>
+                </div>
+              {/each}
+            {/if}
 
-        {#if activeSection == "ENVIRONMENTAL"}
-          <div class="fixed-left-facts mt-custom">
-            {#each visibleFacts as fact (fact.year)}
-              {@const scale = getFactScale(fact)}
-              <div
-                class="fact-box"
-                in:fly={{ y: 50, duration: 600 }}
-                out:fade={{ duration: 300 }}
-                style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
-              >
-                <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
-                <p style="font-size: calc({scale.fontSize} * 0.7);">
-                  {fact.text}
-                </p>
-              </div>
-            {/each}
+            {#if activeSection == "ENVIRONMENTAL"}
+              {#each visibleFacts as fact (fact.year)}
+                {@const scale = getFactScale(fact)}
+                <div
+                  class="fact-box"
+                  onclick={fact.click ? scrollToSeasonal : undefined}
+                  in:fly={{ y: 100, duration: 600 }}
+                  out:fade={{ duration: 300 }}
+                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;
+                  cursor: {fact.click ? 'pointer' : 'default'};"
+                >
+                  <h3 style="font-size: calc({scale.fontSize} * 0.85);">
+                    {fact.year}
+                  </h3>
+                  <p
+                    style="font-size: calc({scale.fontSize} * 0.4); white-space: pre-line;"
+                  >
+                    {fact.text}
+                  </p>
+                </div>
+              {/each}
+            {/if}
           </div>
-        {/if}
-
-        {#if activeSection == "GEOGRAPHICAL"}
-          {#if progress>=95}
-          <div class="fixed-left-facts mt-custom">
-            <div class="d-flex justify-content-start align-items-center">
-              <a href="{base}/immersive">
-                <img src="./earth.gif" alt="earthpic" style="height: 5rem; width: 5rem; margin-top:10rem; transition: all 2s ease-in-out;" />
-              </a>
-              <p style="margin-top:11rem; margin-left:2rem; transition: all 2s ease-in-out;">Try our immersive mode!</p>
-            </div>
-          </div>
-          {/if}
         {/if}
       </div>
 
@@ -417,74 +557,88 @@ Imagine the extreme conditions and geographic influences that could drive such s
         <Scroll bind:progress>
           <div id="virtual"></div>
           <div></div>
-          <div slot="viz" class="viz-content mt-custom">
-            <div class="content mt-5">
-              {#if showQuestion}
-                <p
-                  class="question-text mt-5"
-                  style="font-size: {Math.max(48 - progress * 5, 12)}px; 
-                          padding: {Math.max(40 - progress * 4, 5)}px;
-                          min-height: {Math.max(200 - progress * 20, 50)}px;
-                          opacity: {Math.max(1 - progress * 0.1, 0.1)};"
-                >
-                  {questionText}
-                </p>
-              {/if}
-            </div>
-          </div>
+          <div
+            slot="viz"
+            class="viz-content mt-custom"
+            style="margin-top: 20vh;"
+          ></div>
         </Scroll>
       </div>
 
       <!-- Visualization section that appears at progress >= 10 -->
-      <div class="col-md-6">
+      <!-- Visualization section that appears at progress >= 10 -->
+      <div class="col-md-8">
         {#if showVisualizations}
-          <div
-            class="fixed-right-visualizations"
-            in:fly={{ x: 200, duration: 800, delay: 300 }}
-          >
-            <div class="viz-container mb-4 mt-4">
-              {#if activeSection === "ENVIRONMENTAL"}
-                <FireDurationAndPrecip {progress} />
-              {:else if activeSection === "GEOGRAPHICAL"}
-                <HexbinMap
-                  csvPath="./fire_points_updated.csv"
-                  geojsonPath="./california-counties.geojson"
-                  {progress}
-                />
-              {:else if activeSection === "SEASONAL"}
+          {#if activeSection === "SEASONAL"}
+            <div
+              class="fixed-right-visualizations mt-custom-2"
+              in:fly={{ y: 200, duration: 800, delay: 300 }}
+            >
+              <div class="viz-container">
                 <Seasons
                   csvPath="./fire_climate_data.csv"
                   currentProgress={progress}
                 />
-              {/if}
-              <p class="small text-muted">Progress: {progress}</p>
-            </div>
+                <!-- <p class="small text-muted">Progress: {progress}</p> -->
+              </div>
 
-            <div class="viz-container">
-              {#if activeSection === "ENVIRONMENTAL"}
-                <ParallelCoordsWithDualCharts {progress} />
-              {:else if activeSection === "GEOGRAPHICAL"}
-                <CountyHeatmap
-                  csvPath="./fire_points_updated.csv"
-                  initialStartYear={1992}
-                  initialEndYear={2020}
-                  initialTopN={5}
-                  {progress}
-                />
-              {:else if activeSection === "SEASONAL"}
+              <div class="viz-container">
                 <SeasonsOld
                   csvPath="./fire_climate_data.csv"
                   currentProgress={progress}
                 />
-              {/if}
-              <p class="small text-muted">Progress: {progress}</p>
+                <!-- <p class="small text-muted">Progress: {progress}</p> -->
+              </div>
             </div>
-          </div>
+          {:else}
+            <div
+              class="fixed-right-visualizations d-flex flex-row"
+              in:fly={{ y: 200, duration: 800, delay: 300 }}
+            >
+              <div class="viz-container mt-4 flex-fill me-2">
+                {#if activeSection === "ENVIRONMENTAL"}
+                  <FireDurationAndPrecip {progress} />
+                {:else if activeSection === "GEOGRAPHICAL"}
+                  <HexbinMap
+                    csvPath="./fire_points_updated.csv"
+                    geojsonPath="./california-counties.geojson"
+                    {progress}
+                  />
+                {/if}
+                <!-- <p class="small text-muted">Progress 1: {progress}</p> -->
+              </div>
+
+              <div class="viz-container mt-4 flex-fill ms-2">
+                {#if activeSection === "ENVIRONMENTAL"}
+                  <ParallelCoordsWithDualCharts {progress} />
+                {:else if activeSection === "GEOGRAPHICAL"}
+                  <CountyHeatmap
+                    csvPath="./fire_points_updated.csv"
+                    initialStartYear={1992}
+                    initialEndYear={2020}
+                    initialTopN={5}
+                    {progress}
+                  />
+                {/if}
+                <!-- <p class="small text-muted">Progress 2: {progress}</p> -->
+              </div>
+            </div>
+          {/if}
         {/if}
       </div>
     </div>
   </div>
 </main>
+
+<!-- Permanent Earth Button -->
+<!-- {#if progress >= 5}
+  <div class="fixed-earth-button" transition:slide={{ duration: 400 }}>
+    <a href="{base}/immersive">
+      <img src="./earth.gif" alt="earthpic" />
+      <p>Immersive (3D) mode</p>
+    </a>
+  </div>
+{/if} -->
 
 <style>
   :global(body),
@@ -493,6 +647,7 @@ Imagine the extreme conditions and geographic influences that could drive such s
     padding: 0;
     width: 100%;
     overflow-x: hidden;
+    background-color: #fef9f6;
   }
 
   /* Fixed header styling compatible with Bootstrap */
@@ -515,10 +670,12 @@ Imagine the extreme conditions and geographic influences that could drive such s
   }
 
   .menu-bar h1 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    margin: 0 auto;
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
     text-align: center;
-    flex: 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
   }
 
   .team-icon {
@@ -558,8 +715,9 @@ Imagine the extreme conditions and geographic influences that could drive such s
 
   /* Virtual height for scrolling */
   #virtual {
-    height: 300vh;
+    height: 900vh;
     background-color: #fef9f6;
+    width: 33vw;
   }
 
   /* Question expanded state */
@@ -572,13 +730,13 @@ Imagine the extreme conditions and geographic influences that could drive such s
     position: fixed;
     top: 140px; /* Adjust based on header height */
     left: 20px;
-    width: calc(50% - 30px); /* Half of screen minus some padding */
+    width: calc(33% - 60px); /* Half of screen minus some padding */
     display: flex;
     flex-direction: column;
     gap: 20px;
     z-index: 100;
     max-height: calc(100vh - 160px); /* Calculate height to fit screen */
-    overflow-y: auto; /* Allow scrolling if facts are tall */
+    overflow-y: none; /* Allow scrolling if facts are tall */
   }
 
   .fact-box {
@@ -607,12 +765,13 @@ Imagine the extreme conditions and geographic influences that could drive such s
     position: fixed;
     top: 140px; /* Adjust based on header height */
     right: 20px;
-    width: calc(50% - 30px); /* Half of screen minus some padding */
+    width: calc(66% - 30px); /* Half of screen minus some padding */
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    /* gap: 20px; */
     z-index: 100;
-    max-height: calc(100vh - 160px); /* Calculate height to fit screen */
+    max-height: calc(100vh - 160px);
+    height: 45rem;
     overflow-y: auto; /* Allow scrolling if visualizations are tall */
   }
 
@@ -633,6 +792,8 @@ Imagine the extreme conditions and geographic influences that could drive such s
     color: #3e2c28;
     padding: 1rem;
     width: 100%;
+    /* height: 35rem; */
+    height: 72vh;
   }
 
   /* Content area */
@@ -663,20 +824,25 @@ Imagine the extreme conditions and geographic influences that could drive such s
   .mt-custom {
     margin-top: 4rem;
   }
+  .mt-custom-2 {
+    margin-top: 2rem; /* Or whatever smaller margin you prefer */
+  }
+
+  .question-container {
+    pointer-events: none; /* Let clicks pass through */
+  }
 
   .question-text {
+    pointer-events: auto; /* Make the text itself clickable */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.5s ease-in-out;
-    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 2rem;
     font-weight: 500;
     line-height: 1.4;
-    max-width: 90%;
     margin-left: auto;
     margin-right: auto;
   }
@@ -690,5 +856,60 @@ Imagine the extreme conditions and geographic influences that could drive such s
       opacity: 1;
       transform: translateY(0) translateX(-50%);
     }
+  }
+  .fixed-earth-button {
+    position: fixed;
+    bottom: 10px;
+    left: 20px;
+    z-index: 999;
+    text-align: center;
+  }
+
+  .fixed-earth-button img {
+    height: 5rem;
+    width: 5rem;
+    transition: transform 0.3s ease;
+  }
+
+  .fixed-earth-button img:hover {
+    transform: scale(1.1);
+  }
+
+  .fixed-earth-button p {
+    color: #3e2c28;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .earth-btn {
+    margin-right: 10px;
+  }
+
+  .earth-btn a {
+    text-decoration: none;
+  }
+
+  .earth-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .earth-btn img {
+    height: 2.5rem;
+    width: 2.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  .earth-btn img:hover {
+    transform: scale(1.5);
+  }
+
+  .earth-btn p {
+    color: #3e2c28;
+    font-weight: bold;
+    margin: 0;
+    font-size: 0.7rem;
+    white-space: nowrap;
   }
 </style>

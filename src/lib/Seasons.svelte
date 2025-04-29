@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { onMount } from 'svelte';
   import * as d3 from 'd3';
 
@@ -13,7 +13,7 @@
   let svg, g, x, y, seasonColor;
 
   const margin = { top: 60, right: 150, bottom: 60, left: 80 };
-  const width = 600, height = 300;
+  const width = 800, height = 270;
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
@@ -172,7 +172,9 @@
       .attr("opacity", 0.2);
   }
 
-  $: if (aggData.length > 0 && currentProgress >= 12) {
+  let lastDrawnYearIndex = -1;
+
+$: if (aggData.length > 0 && currentProgress >= 12) {
   const totalYears = aggData.length;
   const progressAfterThreshold = currentProgress - 12;
   const remainingProgress = 100 - 12;
@@ -180,13 +182,28 @@
 
   currentYearIndex = Math.min(totalYears - 1, Math.max(0, adjustedIndex));
 
-  g.selectAll(".year-line-group").remove();
-
-  for (let i = 0; i <= currentYearIndex; i++) {
-    drawSegmentedLine(aggData[i], i === currentYearIndex ? 1.0 : 0.3);
+  while (lastDrawnYearIndex < currentYearIndex) {
+    lastDrawnYearIndex++;
+    drawSegmentedLine(aggData[lastDrawnYearIndex]);
   }
-}
 
+  while (lastDrawnYearIndex > currentYearIndex) {
+    g.selectAll(`.year-${aggData[lastDrawnYearIndex].YEAR}`).remove();
+    lastDrawnYearIndex--;
+  }
+
+  g.selectAll(".year-line-group")
+    .transition()
+    .duration(400)
+    .style("opacity", function() {
+      const classes = d3.select(this).attr("class");
+      const yearMatch = classes.match(/year-(\d+)/);
+      if (!yearMatch) return 0.2;
+      const year = +yearMatch[1];
+      const yearIndex = aggData.findIndex(d => d.YEAR === year);
+      return (yearIndex === currentYearIndex) ? 1.0 : 0.2;
+    });
+}
 </script>
 
 <div style="display: flex; max-width: 1280px; margin: auto; position: relative;">

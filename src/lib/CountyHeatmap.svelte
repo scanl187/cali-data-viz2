@@ -17,14 +17,17 @@
 
   export let metric: 'count' | 'acres' = 'count';
 
-  const cellWidth = 75;
+  const cellWidth = 60;
   const cellHeight = 20;
 
-  $: if (topN && allYears.length && progress >= 12) {
+  let currentVisibleYear = initialStartYear;
+
+  $: if ((topN || metric) && allYears.length && progress >= 12) {
     const progressAfterThreshold = progress - 12;
     const remainingProgress = 100 - 12;
     const yearsToShow = Math.floor((progressAfterThreshold / remainingProgress) * (initialEndYear - initialStartYear));
     const visibleYears = allYears.slice(0, yearsToShow + 1);
+    currentVisibleYear = Math.min(initialEndYear, initialStartYear + yearsToShow);
     updateHeatmap(visibleYears);
   }
 
@@ -62,6 +65,13 @@
     });
 
     draw(topCounties, selectedYears);
+  }
+
+  function getReadableTextColor(backgroundColor) {
+    const rgb = d3.color(backgroundColor);
+    if (!rgb) return "#000"; // fallback
+    const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+    return brightness > 128 ? "#000" : "#fff";
   }
 
   function draw(countyOrder, yYears) {
@@ -114,6 +124,7 @@
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("font-size", "12px")
+      .attr("fill", d => getReadableTextColor(colorScale(d.fire_count)))
       .text(d => d.fire_count > 0 ? Math.round(d.fire_count) : '');
 
     svg.append("g")
@@ -160,10 +171,30 @@
 </div>
 
 <!-- Heatmap -->
-<div bind:this={container} style="overflow-x: auto; overflow-y: auto; max-width: 100%; max-height: 800px; margin: auto;"></div>
+<div style="position: relative;">
+  <div bind:this={container} style="overflow-x: auto; overflow-y: auto; max-width: 100%; max-height: 800px; margin: auto;"></div>
+  <div class="year-label">
+    <strong>{currentVisibleYear}</strong>
+  </div>
+</div>
 
 <style>
   svg {
     font-family: 'Segoe UI', sans-serif;
   }
+
+  .year-label {
+  position: absolute;
+  top: -20px;       /* was 10px */
+  right: -5px;    /* was 40px */
+  font-size: 32px;
+  font-weight: 900;
+  color: #3e2c28;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
 </style>

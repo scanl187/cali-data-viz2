@@ -4,7 +4,7 @@
   import * as d3 from "d3";
 
   export let progress = 0;
-  export let metric = 'acres'; // 'acres' or 'count'
+  export let metric = "acres"; // 'acres' or 'count'
 
   let svg;
   let tooltip;
@@ -13,14 +13,25 @@
 
   const yearExtent = [1992, 2020];
 
-  $: selectedYear = progress >= 12
-    ? yearExtent[0] + Math.round(((progress - 12) / (100 - 12)) * (yearExtent[1] - yearExtent[0]))
-    : undefined;
+  $: selectedYear =
+    progress >= 12
+      ? yearExtent[0] +
+        Math.round(
+          ((progress - 12) / (100 - 12)) * (yearExtent[1] - yearExtent[0]),
+        )
+      : undefined;
 
-  const width = 650;
-  const height = 650;
+  const width = 400;
+  const height = 475;
 
-  const countyLayout = [
+  function getReadableTextColor(backgroundColor) {
+    const rgb = d3.color(backgroundColor);
+    if (!rgb) return "#000"; // fallback
+    const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+    return brightness > 128 ? "#000" : "#fff";
+  }
+
+  const countyLayout = [ /* your counties list unchanged */ 
     { name: "Del Norte", col: 3, row: 0 },
     { name: "Siskiyou", col: 4, row: 0 },
     { name: "Modoc", col: 5, row: 0 },
@@ -77,12 +88,11 @@
     { name: "Los Angeles", col: 5, row: 12 },
     { name: "Orange", col: 6, row: 12 },
     { name: "San Diego", col: 5, row: 13 },
-    { name: "Riverside", col: 6, row: 13 }, // Just right of San Diego, below San Bernardino
-    { name: "Imperial",  col: 6, row: 14 } // Just below Riverside
-
+    { name: "Riverside", col: 6, row: 13 },
+    { name: "Imperial", col: 6, row: 14 },
   ];
 
-  const hexRadius = 25;
+  const hexRadius = 20;
   const hexWidth = Math.sqrt(3) * hexRadius;
   const hexHeight = 2 * hexRadius * 0.75;
 
@@ -91,35 +101,42 @@
   onMount(async () => {
     const raw = await d3.csv("./fire_points_updated.csv", d3.autoType);
     data = raw.filter((d) => d.latitude && d.longitude && d.county);
-    overallMax = d3.max(data, d => metric === 'acres' ? d.acres : 1) || 1;
-    tooltip = d3.select("body")
-  .append("div")
-  .attr("class", "hex-tooltip")
-  .style("opacity", 0)
-  .style("position", "absolute")
-  .style("pointer-events", "none")
-  .style("background", "#222")
-  .style("color", "#fff")
-  .style("padding", "8px 12px")
-  .style("border-radius", "6px")
-  .style("font-size", "14px")
-  .style("z-index", 9999);
+    overallMax = d3.max(data, (d) => (metric === "acres" ? d.acres : 1)) || 1;
 
+    tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "hex-tooltip")
+      .style("opacity", 0)
+      .style("position", "absolute")
+      .style("pointer-events", "none")
+      .style("background", "#222")
+      .style("color", "#fff")
+      .style("padding", "8px 12px")
+      .style("border-radius", "6px")
+      .style("font-size", "14px")
+      .style("z-index", 9999);
   });
 
-  $: if (svg && data.length && progress >= 12 && selectedYear !== undefined) {
+  $: if (
+    svg &&
+    data.length &&
+    progress >= 12 &&
+    selectedYear !== undefined &&
+    metric
+  ) {
     drawHexMap();
   }
 
   function drawHexagonPath(radius) {
     const angle = Math.PI / 3;
-    return d3.range(6).map(i => {
-      const x = radius * Math.cos(angle * i);
-      const y = radius * Math.sin(angle * i);
-      return [x, y];
-    }).reduce((path, [x, y], i) => {
-      return path + (i === 0 ? `M${x},${y}` : `L${x},${y}`);
-    }, "") + "Z";
+    return (
+      d3
+        .range(6)
+        .map((i) => [radius * Math.cos(angle * i), radius * Math.sin(angle * i)])
+        .reduce((path, [x, y], i) => path + (i === 0 ? `M${x},${y}` : `L${x},${y}`), "")
+      + "Z"
+    );
   }
 
   function drawHexMap() {
@@ -129,42 +146,39 @@
     const yearData = data.filter((d) => d.year === selectedYear);
     const valueByCounty = d3.rollup(
       yearData,
-      (v) => metric === 'acres' ? d3.sum(v, d => d.acres) : v.length,
-      (d) => d.county
+      (v) => (metric === "acres" ? d3.sum(v, (d) => d.acres) : v.length),
+      (d) => d.county,
     );
 
     const localMax = d3.max(Array.from(valueByCounty.values()));
-    const color = d3.scaleSequential(d3.interpolateReds)
-      .domain([0, localMax || 1]);
-
+    const color = d3.scaleSequential(d3.interpolateReds).domain([0, localMax || 1]);
     const hexPath = drawHexagonPath(hexRadius);
 
     countyLayout.forEach(({ name, col, row }) => {
       const xOffset = col * hexWidth + (row % 2 === 0 ? 0 : hexWidth / 2) + 60;
-      const yOffset = row * hexHeight + 60;
+      const yOffset = row * hexHeight + 20;
 
       const value = valueByCounty.get(name) || 0;
 
-svgSel.append("path")
-  .attr("d", hexPath)
-  .attr("transform", `translate(${xOffset},${yOffset})`)
-  .attr("fill", color(value))
-  .attr("stroke", "#fff")
-  .attr("stroke-width", 0.8)
-  .on("mouseover", function () {
-    tooltip
-      .html(`<strong>${name}</strong><br>${metric === 'acres' ? 'Acres Burned' : 'Fire Count'}: ${Math.round(value)}`)
-      .style("opacity", 1);
-  })
-  .on("mousemove", function (event) {
-    tooltip
-      .style("left", `${event.pageX + 15}px`)
-      .style("top", `${event.pageY - 30}px`);
-  })
-  .on("mouseout", function () {
-    tooltip.style("opacity", 0);
-  });
-
+      svgSel.append("path")
+        .attr("d", hexPath)
+        .attr("transform", `translate(${xOffset},${yOffset})`)
+        .attr("fill", color(value))
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 0.8)
+        .on("mouseover", function () {
+          tooltip
+            .html(`<strong>${name}</strong><br>${metric === "acres" ? "Acres Burned" : "Fire Count"}: ${Math.round(value)}`)
+            .style("opacity", 1);
+        })
+        .on("mousemove", function (event) {
+          tooltip
+            .style("left", `${event.pageX + 15}px`)
+            .style("top", `${event.pageY - 30}px`);
+        })
+        .on("mouseout", function () {
+          tooltip.style("opacity", 0);
+        });
 
       svgSel.append("text")
         .attr("x", xOffset)
@@ -172,19 +186,22 @@ svgSel.append("path")
         .text(name)
         .attr("text-anchor", "middle")
         .attr("font-size", 8)
-        .attr("fill", "#222");
+        .attr("fill", getReadableTextColor(color(value)));
     });
 
+    // Legend creation remains unchanged
     const legendHeight = 150;
     const legendWidth = 12;
     const gradientId = "legend-gradient";
-    const legendX = width - 200;
+    const legendX = width - 90;
 
     const defs = svgSel.append("defs");
     const gradient = defs.append("linearGradient")
       .attr("id", gradientId)
-      .attr("x1", "0%").attr("y1", "100%")
-      .attr("x2", "0%").attr("y2", "0%");
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "0%")
+      .attr("y2", "0%");
 
     const stops = d3.range(0, 1.01, 0.1);
     stops.forEach((s) => {
@@ -215,11 +232,10 @@ svgSel.append("path")
       .attr("text-anchor", "start")
       .attr("font-size", "12px")
       .attr("fill", "#333")
-      .text(metric === 'acres' ? "Acres burned" : "Fire count");
+      .text(metric === "acres" ? "Acres burned" : "Fire count");
   }
 </script>
 
-<!-- Toggle -->
 <div style="text-align:center; margin-bottom: 0.5rem;">
   <label><input type="radio" bind:group={metric} value="count" /> Count</label>
   <label style="margin-left: 1rem;"><input type="radio" bind:group={metric} value="acres" /> Acres</label>
@@ -241,7 +257,6 @@ svgSel.append("path")
     color: #3e2c28;
   }
   .hex-tooltip {
-  transition: opacity 0.2s ease-in-out;
-}
-
+    transition: opacity 0.2s ease-in-out;
+  }
 </style>
