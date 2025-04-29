@@ -14,6 +14,10 @@
 
   let progress = $state(0);
 
+  let envSection;
+  let geoSection;
+  let seasSection;
+
   // ACTIVE SECTION STATE
   let activeSection = $state("GEOGRAPHICAL");
 
@@ -217,6 +221,7 @@
       text: "Some years saw burned acreage spike over 210%, even hitting an incredible 1343% jump — showcasing the volatility of wildfire seasons. Why?",
       startProgress: 91,
       endProgress: 1000,
+      click: true
     },
   ];
 
@@ -254,6 +259,7 @@ Climate Patterns:
   `,
       startProgress: 80,
       endProgress: 1000,
+      click: true
     },
   ];
 
@@ -278,6 +284,19 @@ Climate Patterns:
       (f) => progress >= f.startProgress && progress <= f.endProgress,
     ),
   );
+
+  function scrollToEnvironmental() {
+    activeSection = "ENVIRONMENTAL";
+    progress = 10.01;
+    envSection?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function scrollToSeasonal() {
+    activeSection = "SEASONAL";
+    progress = 10.01
+    seasSection?.scrollIntoView({ behavior: "smooth" });
+  }
+  
 
   // Adjust visualization position based on screen size
   onMount(() => {
@@ -305,7 +324,7 @@ Climate Patterns:
     <div class="container-fluid">
       <div class="menu-bar">
         <h1>GOLDEN STATE OF FIRE</h1>
-        <p>{progress}</p>
+        <!-- <p>{progress}</p> -->
         <div class="team-icon" onclick={() => (showTeam = !showTeam)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -331,7 +350,9 @@ Climate Patterns:
               class="btn w-100 {activeSection === 'GEOGRAPHICAL'
                 ? 'active-btn'
                 : ''}"
-              onclick={() => (activeSection = "GEOGRAPHICAL")}
+              onclick={() => {
+                activeSection = "GEOGRAPHICAL";
+              }}
             >
               GEOGRAPHICAL
             </button>
@@ -341,7 +362,9 @@ Climate Patterns:
               class="btn w-100 {activeSection === 'ENVIRONMENTAL'
                 ? 'active-btn'
                 : ''}"
-              onclick={() => (activeSection = "ENVIRONMENTAL")}
+              onclick={() => {
+                activeSection = "ENVIRONMENTAL";
+              }}
             >
               ENVIRONMENTAL
             </button>
@@ -351,7 +374,9 @@ Climate Patterns:
               class="btn w-100 {activeSection === 'SEASONAL'
                 ? 'active-btn'
                 : ''}"
-              onclick={() => (activeSection = "SEASONAL")}
+              onclick={() => {
+                activeSection = "SEASONAL";
+              }}
             >
               SEASONAL
             </button>
@@ -434,28 +459,17 @@ Climate Patterns:
     </p>
   </div>
 {/if}
+{#if progress >= 10.01}
+  <section bind:this={envSection}></section>
+  <section bind:this={geoSection}></section>
+  <section bind:this={seasSection}></section>
+{/if}
 
 <main class="pt-5 mt-5">
   <div class="container-fluid">
     <div class="row">
       <!-- Left column for facts -->
       <div class="col-md-4">
-        <!-- <div
-          class="content"
-          style="max-width: 120rem; min-width: 40rem; position: fixed; z-index: 1000;"
-        >
-          <p
-            class="question-text mt-custom"
-            style="
-          font-size: {Math.max(48 - progress * 5, 15)}px; 
-          padding: {Math.max(40 - progress * 4, 5)}px;
-          min-height: {Math.max(200 - progress * 20, 50)}px;
-          "
-          >
-            {questionText}
-          </p>
-        </div> -->
-
         {#if (activeSection == "GEOGRAPHICAL" && wildfireVisibleFacts.length > 0) || (activeSection == "SEASONAL" && seasonalVisibleFacts.length > 0) || (activeSection == "ENVIRONMENTAL" && visibleFacts.length > 0)}
           <div class="fixed-left-facts mt-custom" style="margin-top: 6rem;">
             {#if activeSection == "GEOGRAPHICAL"}
@@ -463,9 +477,11 @@ Climate Patterns:
                 {@const scale = getFactScale(fact)}
                 <div
                   class="fact-box"
+                  onclick={fact.click ? scrollToEnvironmental : undefined}
                   in:fly={{ y: 50, duration: 600 }}
                   out:fade={{ duration: 300 }}
-                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
+                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;
+                  cursor: {fact.click ? 'pointer' : 'default'};"
                 >
                   <h3 style="font-size: {scale.fontSize};">{fact.year}</h3>
                   <p
@@ -480,6 +496,8 @@ Climate Patterns:
             {#if activeSection == "SEASONAL"}
               {#each seasonalVisibleFacts as fact (fact.year)}
                 {@const scale = getFactScale(fact)}
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <div
                   class="fact-box"
                   in:fly={{ y: 50, duration: 600 }}
@@ -501,11 +519,15 @@ Climate Patterns:
                 {@const scale = getFactScale(fact)}
                 <div
                   class="fact-box"
+                  onclick={fact.click ? scrollToSeasonal : undefined}
                   in:fly={{ y: 50, duration: 600 }}
                   out:fade={{ duration: 300 }}
-                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;"
+                  style="opacity: {scale.opacity}; transition: all 2s ease-in-out;
+                  cursor: {fact.click ? 'pointer' : 'default'};"
                 >
-                  <h3 style="font-size: calc({scale.fontSize} * 0.85);">{fact.year}</h3>
+                  <h3 style="font-size: calc({scale.fontSize} * 0.85);">
+                    {fact.year}
+                  </h3>
                   <p
                     style="font-size: calc({scale.fontSize} * 0.4); white-space: pre-line;"
                   >
@@ -523,8 +545,11 @@ Climate Patterns:
         <Scroll bind:progress>
           <div id="virtual"></div>
           <div></div>
-          <div slot="viz" class="viz-content mt-custom" style="margin-top: 20vh;">
-          </div>
+          <div
+            slot="viz"
+            class="viz-content mt-custom"
+            style="margin-top: 20vh;"
+          ></div>
         </Scroll>
       </div>
 
@@ -786,14 +811,13 @@ Climate Patterns:
     margin-top: 4rem;
   }
   .mt-custom-2 {
-  margin-top: 2rem; /* Or whatever smaller margin you prefer */
-}
-
+    margin-top: 2rem; /* Or whatever smaller margin you prefer */
+  }
 
   .question-container {
     pointer-events: none; /* Let clicks pass through */
   }
-  
+
   .question-text {
     pointer-events: auto; /* Make the text itself clickable */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
