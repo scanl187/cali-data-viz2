@@ -9,8 +9,8 @@
     let yearRange = { min: 2013, max: 2020 };
     let currentYear = yearRange.min;
   
-    const chartMaxWidth = 500;
-    const chartHeight = 600;
+    const chartMaxWidth = 400;
+    const chartHeight = 450;
   
     function progressToYear(progress) {
       const minP = 12, maxP = 100;
@@ -111,7 +111,7 @@
   
       svg.append("text")
         .attr("x", width / 2)
-        .attr("y", height + margin.bottom - 15)
+        .attr("y", height + margin.bottom - 5)
         .attr("text-anchor", "middle")
         .style("font-family", "sans-serif")
         .style("font-size", "13px")

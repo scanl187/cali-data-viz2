@@ -16,13 +16,6 @@
   // ACTIVE SECTION STATE
   let activeSection = $state("GEOGRAPHICAL");
 
-  let vizContainerHeight = window.innerHeight * 0.72 + "px";
-
-  function updateHeight() {
-    // height = window.innerHeight * 0.8;
-    vizContainerHeight = window.innerHeight * 0.72 + "px";
-  }
-
   let showTeam = $state(false);
   let screenWidth = $state(0);
 
@@ -342,14 +335,6 @@ Climate Patterns:
         </div>
         <div class="col-4">
           <button
-            class="btn w-100 {activeSection === 'SEASONAL' ? 'active-btn' : ''}"
-            onclick={() => (activeSection = "SEASONAL")}
-          >
-            SEASONAL
-          </button>
-        </div>
-        <div class="col-4">
-          <button
             class="btn w-100 {activeSection === 'ENVIRONMENTAL'
               ? 'active-btn'
               : ''}"
@@ -358,6 +343,15 @@ Climate Patterns:
             ENVIRONMENTAL
           </button>
         </div>
+        <div class="col-4">
+          <button
+            class="btn w-100 {activeSection === 'SEASONAL' ? 'active-btn' : ''}"
+            onclick={() => (activeSection = "SEASONAL")}
+          >
+            SEASONAL
+          </button>
+        </div>
+       
       </div>
     </div>
 
@@ -519,7 +513,7 @@ Climate Patterns:
               class="fixed-right-visualizations mt-custom"
               in:fly={{ y: 200, duration: 800, delay: 300 }}
             >
-              <div class="viz-container" style="height: {vizContainerHeight}">
+              <div class="viz-container">
                 <Seasons
                   csvPath="./fire_climate_data.csv"
                   currentProgress={progress}
@@ -527,7 +521,7 @@ Climate Patterns:
                 <!-- <p class="small text-muted">Progress: {progress}</p> -->
               </div>
 
-              <div class="viz-container" style="height: {vizContainerHeight}">
+              <div class="viz-container">
                 <SeasonsOld
                   csvPath="./fire_climate_data.csv"
                   currentProgress={progress}
@@ -540,7 +534,7 @@ Climate Patterns:
               class="fixed-right-visualizations d-flex flex-row"
               in:fly={{ y: 200, duration: 800, delay: 300 }}
             >
-              <div class="viz-container mt-4 flex-fill me-3" style="height: {vizContainerHeight}">
+              <div class="viz-container mt-4 flex-fill me-3">
                 {#if activeSection === "ENVIRONMENTAL"}
                   <FireDurationAndPrecip {progress} />
                 {:else if activeSection === "GEOGRAPHICAL"}
@@ -553,7 +547,7 @@ Climate Patterns:
                 <!-- <p class="small text-muted">Progress 1: {progress}</p> -->
               </div>
 
-              <div class="viz-container mb-4 mt-4 flex-fill ms-3" style="height: {vizContainerHeight}">
+              <div class="viz-container mb-4 mt-4 flex-fill ms-3">
                 {#if activeSection === "ENVIRONMENTAL"}
                   <ParallelCoordsWithDualCharts {progress} />
                 {:else if activeSection === "GEOGRAPHICAL"}
@@ -732,6 +726,7 @@ Climate Patterns:
     padding: 1rem;
     width: 100%;
     /* height: 35rem; */
+    height: 72vh;
   }
 
   /* Content area */
