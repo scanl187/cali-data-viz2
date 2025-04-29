@@ -17,7 +17,7 @@
 
   export let metric: 'count' | 'acres' = 'count';
 
-  const cellWidth = 75;
+  const cellWidth = 60;
   const cellHeight = 20;
 
   // ✅ Updated combined reactive block

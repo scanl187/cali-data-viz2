@@ -17,8 +17,8 @@
     ? yearExtent[0] + Math.round(((progress - 12) / (100 - 12)) * (yearExtent[1] - yearExtent[0]))
     : undefined;
 
-  const width = 570;
-  const height = 650;
+  const width = 400;
+  const height = 475;
 
   function getReadableTextColor(backgroundColor) {
     const rgb = d3.color(backgroundColor);
@@ -88,7 +88,7 @@
     { name: "Imperial", col: 6, row: 14 }
   ];
 
-  const hexRadius = 25;
+  const hexRadius = 20;
   const hexWidth = Math.sqrt(3) * hexRadius;
   const hexHeight = 2 * hexRadius * 0.75;
 
@@ -147,7 +147,7 @@
 
     countyLayout.forEach(({ name, col, row }) => {
       const xOffset = col * hexWidth + (row % 2 === 0 ? 0 : hexWidth / 2) + 60;
-      const yOffset = row * hexHeight + 60;
+      const yOffset = row * hexHeight + 20;
 
       const value = valueByCounty.get(name) || 0;
 
@@ -183,7 +183,7 @@
     const legendHeight = 150;
     const legendWidth = 12;
     const gradientId = "legend-gradient";
-    const legendX = width - 200;
+    const legendX = width - 90;
 
     const defs = svgSel.append("defs");
     const gradient = defs.append("linearGradient")
