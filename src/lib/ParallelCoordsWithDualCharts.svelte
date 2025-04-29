@@ -17,6 +17,9 @@
   let precipData, tempData, windData;
   let currentMaxYear = 1984; // Initialize with the minimum year
   let maxDataYear = 2020; // Will be updated after loading data
+  let visibleYearLabel = 1984;
+  $: visibleYearLabel = currentMaxYear;
+
 
   const chartMaxWidth = 450;
   const chartHeight = 190;
@@ -319,6 +322,10 @@
 </script>
 
 <div class="chart-container">
+  <div class="year-label">
+    <strong>{visibleYearLabel}</strong>
+  </div>
+  
   <div bind:this={chartDiv} class="chart-div"></div>
 
   <div class="chart-selector">
@@ -361,4 +368,19 @@
     max-width: 100%;
     overflow: hidden;
   }
+
+  .year-label {
+  position: absolute;
+  top: 25px;
+  right: 5px;
+  font-size: 24px;
+  font-weight: 900;
+  color: #3e2c28;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
 </style>
