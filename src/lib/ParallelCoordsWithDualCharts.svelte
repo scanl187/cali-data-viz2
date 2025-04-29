@@ -3,10 +3,6 @@
   import { onMount } from "svelte";
   import * as d3 from "d3";
   export let progress = 0;
-  //@ts-nocheck
-  import { onMount } from "svelte";
-  import * as d3 from "d3";
-  export let progress = 0;
 
   let selectedChart = "precip";
   let chartDiv;
@@ -25,8 +21,6 @@
 
   $: visibleYearLabel = currentMaxYear;
 
-  const chartMaxWidth = 450;
-  const chartHeight = 190;
   const chartMaxWidth = 450;
   const chartHeight = 190;
 
@@ -53,19 +47,7 @@
       }
     }
   }
-  $: {
-    // Update visualization whenever progress changes
-    if (Plotly && enrichedData.length > 0) {
-      const newMaxYear = progressToYear(progress);
-      if (newMaxYear !== currentMaxYear) {
-        currentMaxYear = newMaxYear;
-        updateVisualization();
-      }
-    }
-  }
 
-  onMount(async () => {
-    if (!Plotly) Plotly = (await import("plotly.js-dist"))?.default;
   onMount(async () => {
     if (!Plotly) Plotly = (await import("plotly.js-dist"))?.default;
 
@@ -91,7 +73,6 @@
     }
 
     allMetrics = [...metrics, "FIRE_COUNT"];
-    allMetrics = [...metrics, "FIRE_COUNT"];
 
     dimensions = allMetrics.map(metric => ({
       label: metric.replace(/_/g, " "),
@@ -103,13 +84,7 @@
     // Initial visualization with current progress
     currentMaxYear = progressToYear(progress);
     updateVisualization();
-    // Initial visualization with current progress
-    currentMaxYear = progressToYear(progress);
-    updateVisualization();
 
-    chartDiv.on("plotly_restyle", updateSelectedYears);
-    chartDiv.on("plotly_relayout", updateSelectedYears);
-  });
     chartDiv.on("plotly_restyle", updateSelectedYears);
     chartDiv.on("plotly_relayout", updateSelectedYears);
   });
@@ -145,8 +120,6 @@
 
     updateSelectedYears();
   }
-    updateSelectedYears();
-  }
 
   function updateSelectedYears() {
     let filtered = enrichedData.filter(d => d.YEAR <= currentMaxYear);
@@ -169,16 +142,7 @@
     drawAllCharts();
     updateChartVisibility();
   }
-    clearCharts();
-    drawAllCharts();
-    updateChartVisibility();
-  }
 
-  function clearCharts() {
-    d3.select(precipChartDiv).selectAll("*").remove();
-    d3.select(tempChartDiv).selectAll("*").remove();
-    d3.select(windChartDiv).selectAll("*").remove();
-  }
   function clearCharts() {
     d3.select(precipChartDiv).selectAll("*").remove();
     d3.select(tempChartDiv).selectAll("*").remove();
@@ -195,15 +159,7 @@
     precipChartDiv.style.display = "none";
     tempChartDiv.style.display = "none";
     windChartDiv.style.display = "none";
-  function updateChartVisibility() {
-    precipChartDiv.style.display = "none";
-    tempChartDiv.style.display = "none";
-    windChartDiv.style.display = "none";
 
-    if (selectedChart === "precip") precipChartDiv.style.display = "block";
-    else if (selectedChart === "temp") tempChartDiv.style.display = "block";
-    else if (selectedChart === "wind") windChartDiv.style.display = "block";
-  }
     if (selectedChart === "precip") precipChartDiv.style.display = "block";
     else if (selectedChart === "temp") tempChartDiv.style.display = "block";
     else if (selectedChart === "wind") windChartDiv.style.display = "block";
@@ -212,12 +168,7 @@
   function handleChartSelection() {
     updateChartVisibility();
   }
-  function handleChartSelection() {
-    updateChartVisibility();
-  }
 
-  function drawDualChart(type, container, rawData) {
-    if (!rawData || !container) return;
   function drawDualChart(type, container, rawData) {
     if (!rawData || !container) return;
 
@@ -244,9 +195,6 @@
       data = data.filter(d => selectedYears.includes(d.YEAR));
     }
 
-    const margin = { top: 20, right: 60, bottom: 50, left: 60 };
-    const width = chartMaxWidth - margin.left - margin.right;
-    const height = chartHeight - margin.top - margin.bottom;
     const margin = { top: 20, right: 60, bottom: 50, left: 60 };
     const width = chartMaxWidth - margin.left - margin.right;
     const height = chartHeight - margin.top - margin.bottom;
@@ -338,9 +286,9 @@
 
 .year-label {
   position: absolute;
-  top: -10px;
-  right: -10px;
-  font-size: 24px;
+  top: 5px;
+  right: 30px;
+  font-size: 32px;
   font-weight: 900;
   color: #3e2c28;
   background: rgba(255, 255, 255, 0.85);
@@ -355,4 +303,3 @@
   overflow: hidden;
 }
 </style>
-
