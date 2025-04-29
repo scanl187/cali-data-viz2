@@ -16,7 +16,8 @@
   // ACTIVE SECTION STATE
   let activeSection = $state("GEOGRAPHICAL");
 
-  let vizContainerHeight = window.innerHeight * 0.72 + "px";
+  let vizContainerHeight = "0px";
+
 
   function updateHeight() {
     // height = window.innerHeight * 0.8;
@@ -289,10 +290,14 @@ Climate Patterns:
   onMount(() => {
     // Get initial screen width
     screenWidth = window.innerWidth;
+    vizContainerHeight = window.innerHeight * 0.72 + "px";
+
 
     // Update on resize
     const handleResize = () => {
       screenWidth = window.innerWidth;
+      vizContainerHeight = window.innerHeight * 0.72 + "px";
+
     };
 
     window.addEventListener("resize", handleResize);
