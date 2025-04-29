@@ -523,7 +523,7 @@ Climate Patterns:
         <Scroll bind:progress>
           <div id="virtual"></div>
           <div></div>
-          <div slot="viz" class="viz-content mt-custom">
+          <div slot="viz" class="viz-content mt-custom" style="margin-top: 20vh;">
           </div>
         </Scroll>
       </div>
@@ -610,6 +610,7 @@ Climate Patterns:
     padding: 0;
     width: 100%;
     overflow-x: hidden;
+    background-color: #fef9f6;
   }
 
   /* Fixed header styling compatible with Bootstrap */
@@ -677,6 +678,7 @@ Climate Patterns:
   #virtual {
     height: 900vh;
     background-color: #fef9f6;
+    width: 33vw;
   }
 
   /* Question expanded state */

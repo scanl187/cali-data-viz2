@@ -133,15 +133,22 @@
         </p>
 
         <div id="scroll-indicator" class="scroll-indicator">
-            <span>Discover the story</span>
+            <span>Scroll to discover</span>
             <svg width="24" height="24" viewBox="0 0 24 24">
                 <path d="M7 10l5 5 5-5z" fill="#cc5c3c" />
             </svg>
         </div>
     </div>
 </div>
+<div class="extraspace">
 
+</div>
 <style>
+
+    .extraspace {
+        height: 50vh;
+        background-color: #fef9f6;
+    }
     /* Introduction section styling */
     .introduction-section {
         height: 100vh;
@@ -390,7 +397,7 @@
         transform: translateX(-50%);
         width: 100%;
         height: 20%;
-        background: linear-gradient(#3a241d, #5d4037);
+        /* background: linear-gradient(#3a241d, #5d4037); */
         border-radius: 5px;
     }
 
@@ -469,7 +476,7 @@
     /* Scroll indicator */
     .scroll-indicator {
         position: absolute;
-        bottom: -14rem;
+        bottom: -17rem;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
