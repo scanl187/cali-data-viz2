@@ -4,5 +4,6 @@ import { defineConfig } from 'vite';
 
 
 export default defineConfig({
+	base: '/cali-data-viz2/',   // your fork repo name
 	plugins: [sveltekit()]
 });
