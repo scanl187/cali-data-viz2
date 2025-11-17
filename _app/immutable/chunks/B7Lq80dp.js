@@ -1,0 +1,1 @@
+import{t as r,a as o}from"./D0olhUvi.js";import"./1fWIjdlx.js";import{s as e}from"./BxuMG8tz.js";import{b as m}from"./C_ltecVw.js";var p=r("<a>back</a>");function c(t){var a=p();e(a,"href",`${m??""}/`),o(t,a)}export{c as B};

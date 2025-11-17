@@ -1,0 +1,1 @@
+import"../chunks/D0olhUvi.js";import"../chunks/1fWIjdlx.js";import{C as a}from"../chunks/D7Yb-WTY.js";function r(t){a(t,{csvPath:"/corr_heatmap_county.csv",initialStartYear:1992,initialEndYear:2020,initialTopN:10})}export{r as component};
